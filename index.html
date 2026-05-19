@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CarPlay Drive Expert PRO - Gestione Spese Avanzata</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Drive Expert">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <title>CarPlay Drive Expert PRO</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <style>
@@ -13,19 +19,39 @@
             --cp-blue: #007AFF;
             --cp-green: #34C759;
             --cp-orange: #FF9500;
-            --radius: 24px;
         }
 
         body, html { 
             margin: 0; 
             padding: 0; 
             width: 100vw; 
-            height: 100vh; 
+            height: 100vh;
             height: 100dvh; 
             overflow: hidden; 
             background: var(--cp-bg); 
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto; 
             -webkit-text-size-adjust: 100%;
+        }
+
+        /* Istruzioni per installazione iniziale in Safari */
+        #pwa-instructions {
+            position: fixed;
+            inset: 0;
+            background: #1C1C1E;
+            color: white;
+            z-index: 9999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        /* Nasconde la schermata di installazione se l'app è già aperta a schermo intero standalone */
+        @media (display-mode: standalone) or (-webkit-display-mode: standalone) {
+            #pwa-instructions { display: none !important; }
         }
 
         /* Schermata di blocco rotazione per smartphone in verticale */
@@ -44,8 +70,8 @@
         }
 
         #rotate-warning .icon {
-            font-size: 50px;
-            margin-bottom: 15px;
+            font-size: 40px;
+            margin-bottom: 10px;
             animation: rotateAnim 2s infinite ease-in-out;
         }
 
@@ -64,95 +90,107 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .asset-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
         }
 
         .asset-tile { 
-            width: 240px; 
-            height: 300px; 
-            border-radius: 35px; 
+            flex: 1;
+            height: 180px; 
+            border-radius: 20px; 
             background: #fff; 
             cursor: pointer; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between; 
             align-items: center; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
-            margin: 15px;
-            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            padding: 10px;
             box-sizing: border-box;
         }
 
         .asset-tile model-viewer {
             width: 100%;
-            height: 80%;
+            height: 75%;
         }
 
         #main-app { 
             display: none; 
-            grid-template-columns: 85px 1fr; 
             width: 100vw; 
-            height: 100vh; 
+            height: 100vh;
             height: 100dvh;
             box-sizing: border-box;
         }
 
         #dock { 
+            width: 70px;
             background: #E5E5EA; 
             border-right: 1px solid #C6C6C8; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 20px; 
-            padding-top: 20px; 
+            gap: 15px; 
+            padding-top: 15px; 
             height: 100%;
             box-sizing: border-box;
             z-index: 10;
         }
 
         .dock-icon { 
-            width: 55px; 
-            height: 55px; 
-            border-radius: 14px; 
+            width: 48px; 
+            height: 48px; 
+            border-radius: 12px; 
             background: #fff; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            font-size: 24px; 
+            font-size: 20px; 
             cursor: pointer; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         
         #app-body-wrapper {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            width: 100%;
+            display: flex;
+            width: calc(100vw - 70px);
             height: 100%;
             overflow: hidden;
         }
 
         #dashboard { 
-            padding: 15px; 
+            width: 35%;
+            min-width: 290px;
+            max-width: 380px;
+            padding: 10px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 12px; 
-            width: 400px;
-            min-width: 400px;
+            gap: 10px; 
             box-sizing: border-box;
             height: 100%;
+            background: var(--cp-bg);
+            border-right: 1px solid #D1D1D6;
         }
 
         .tile { 
             background: #fff; 
-            border-radius: 18px; 
-            padding: 16px; 
+            border-radius: 14px; 
+            padding: 12px; 
             border: 1px solid #D1D1D6; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03); 
         }
 
         #mini-car-box {
-            height: 90px;
+            height: 65px;
             width: 100%;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         #mini-car-box model-viewer {
@@ -165,20 +203,21 @@
             overflow-x: auto; 
             overflow-y: hidden; 
             width: 100%; 
-            padding: 6px 0; 
-            gap: 8px;
+            padding: 4px 0; 
+            gap: 6px;
             scroll-behavior: smooth;
             white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
         }
 
         .horizontal-pills::-webkit-scrollbar { display: none; }
 
         .pill { 
             flex: 0 0 auto;
-            padding: 8px 14px; 
+            padding: 6px 10px; 
             background: #E5E5EA; 
-            border-radius: 10px; 
-            font-size: 12px; 
+            border-radius: 8px; 
+            font-size: 11px; 
             font-weight: 600; 
             color: #48484A; 
             border: none; 
@@ -191,43 +230,43 @@
 
         input, select { 
             width: 100%; 
-            padding: 10px; 
-            border-radius: 10px; 
+            padding: 8px; 
+            border-radius: 8px; 
             border: 1px solid #D1D1D6; 
             background: #F2F2F7; 
-            margin-bottom: 6px; 
-            font-size: 13px; 
+            margin-bottom: 4px; 
+            font-size: 12px; 
             box-sizing: border-box;
         }
 
         label { 
-            font-size: 11px; 
+            font-size: 10px; 
             text-transform: uppercase; 
             font-weight: 800; 
             color: #8E8E93; 
-            margin-bottom: 3px; 
+            margin-bottom: 2px; 
             display: block; 
         }
         
         .btn { 
             width: 100%; 
-            height: 46px; 
+            height: 38px; 
             border: none; 
-            border-radius: 12px; 
-            font-size: 14px; 
+            border-radius: 10px; 
+            font-size: 13px; 
             font-weight: 700; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
         }
 
         .btn-primary { background: var(--cp-blue); color: #fff; }
         .btn-success { background: var(--cp-green); color: white; }
         
         #map { 
-            width: 100%; 
+            flex: 1;
             height: 100%; 
             z-index: 1;
         }
@@ -235,13 +274,13 @@
         .total-banner { 
             background: #34C759; 
             color: #fff; 
-            border-radius: 14px; 
-            padding: 12px; 
+            border-radius: 10px; 
+            padding: 10px; 
             text-align: center; 
-            margin-top: 10px; 
+            margin-top: 8px; 
         }
 
-        #val-total { font-size: 26px; font-weight: 800; }
+        #val-total { font-size: 22px; font-weight: 800; }
         
         #archive-modal { 
             position: fixed; 
@@ -255,24 +294,24 @@
 
         #archive-content { 
             width: 95vw; 
-            max-width: 1000px;
+            max-width: 900px;
             background: #fff; 
-            border-radius: 24px; 
-            padding: 20px; 
+            border-radius: 20px; 
+            padding: 15px; 
             max-height: 90vh; 
             overflow-y: auto; 
             box-sizing: border-box;
         }
 
-        .archive-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .archive-table th, .archive-table td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 12px; }
+        .archive-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .archive-table th, .archive-table td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 11px; }
 
         .delete-btn {
             background: #FF3B30;
             color: white;
             border: none;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 4px 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -281,87 +320,85 @@
             color: var(--cp-blue); 
             font-weight: bold; 
             text-decoration: none; 
-            font-size: 11px; 
+            font-size: 10px; 
             border: 1px solid var(--cp-blue); 
-            padding: 5px 10px; 
-            border-radius: 6px; 
-            margin-right: 5px; 
+            padding: 4px 8px; 
+            border-radius: 5px; 
+            margin-right: 4px; 
             display: inline-block; 
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        .flex-box { display: flex; gap: 8px; }
+        .flex-box { display: flex; gap: 6px; }
         .flex-child { flex: 1; }
 
         .balance-box {
             background: #F2F2F7;
-            padding: 12px;
-            border-radius: 12px;
-            margin-top: 8px;
-            border-left: 5px solid var(--cp-orange);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 6px;
+            border-left: 4px solid var(--cp-orange);
         }
-        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 4px; font-size: 12px; }
-        .debt-line { font-size: 12px; margin: 3px 0; color: #3A3A3C; }
+        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 2px; font-size: 11px; }
+        .debt-line { font-size: 11px; margin: 2px 0; color: #3A3A3C; }
 
         .input-group-box {
             background: #F9F9FB;
-            padding: 8px;
-            border-radius: 10px;
+            padding: 6px;
+            border-radius: 8px;
             border: 1px solid #E5E5EA;
             flex: 1;
         }
 
-        /* Quando lo smartphone viene girato in orizzontale o su schermi desktop compatti */
-        @media (max-width: 900px) and (orientation: landscape) {
-            #dock { gap: 10px; padding-top: 10px; width: 65px; }
-            #main-app { grid-template-columns: 65px 1fr; }
-            .dock-icon { width: 45px; height: 45px; font-size: 20px; border-radius: 10px; }
-            #app-body-wrapper { grid-template-columns: 320px 1fr; }
-            #dashboard { width: 320px; min-width: 320px; padding: 10px; gap: 10px; }
-            .tile { padding: 12px; border-radius: 12px; }
-            #mini-car-box { height: 65px; }
-            input, select { padding: 6px; font-size: 12px; margin-bottom: 4px; }
-            .btn { height: 36px; font-size: 12px; border-radius: 8px; }
-            .pill { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
-            #val-total { font-size: 22px; }
-        }
-
         /* Intercettiamo i telefoni rimasti in VERTICALE */
-        @media (max-width: 480px) and (orientation: portrait) {
+        @media (orientation: portrait) {
             #rotate-warning { display: flex; }
+            #main-app { display: none !important; }
         }
     </style>
 </head>
 <body>
 
+<div id="pwa-instructions">
+    <div style="font-size: 50px; margin-bottom: 15px;">📲</div>
+    <h2 style="margin: 0 0 10px 0; font-size: 20px;">Installa l'App CarPlay</h2>
+    <p style="margin: 0 0 25px 0; color: #AEAEB2; font-size: 14px; line-height: 1.4;">
+        Per eliminare le barre di Safari e usarla a schermo intero reale:<br><br>
+        1. Premi il tasto <b>Condividi</b> in basso (quadrato con freccia in alto <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'/><polyline points='16 6 12 2 8 6'/><line x1='12' y1='2' x2='12' y2='15'/></svg>" style="vertical-align:middle;">)<br>
+        2. Scorri e seleziona <b>"Aggiungi alla schermata Home"</b><br>
+        3. Apri l'app dall'icona creata sul telefono.
+    </p>
+    <button class="btn btn-primary" style="width: auto; padding: 0 30px;" onclick="document.getElementById('pwa-instructions').style.display='none'">Usa nel browser (Con barre)</button>
+</div>
+
 <div id="rotate-warning">
     <div class="icon">🔄</div>
-    <h2 style="margin: 0 0 10px 0; font-size: 20px;">Gira il telefono</h2>
-    <p style="margin: 0; color: #8E8E93; font-size: 14px;">Questa app necessita dello schermo in orizzontale per essere usata.</p>
+    <h2 style="margin: 0 0 5px 0; font-size: 18px;">Gira l'iPhone in Orizzontale</h2>
+    <p style="margin: 0; color: #8E8E93; font-size: 13px;">L'interfaccia CarPlay richiede lo schermo panoramico.</p>
 </div>
 
 <div id="landing-page">
-    <h1 style="margin-bottom:20px; font-size: 22px;">Seleziona il tuo Veicolo</h1>
-    <div style="display:flex; justify-content: center; width: 100%;">
+    <h1 style="margin-bottom:15px; font-size: 18px; font-weight: 800;">Seleziona Veicolo</h1>
+    <div class="asset-container">
         <div class="asset-tile" onclick="avviaApp('panda')">
             <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight" interaction-prompt="none"></model-viewer>
-            <span style="font-weight:700; font-size: 14px;">Fiat Panda Hybrid</span>
+            <span style="font-weight:700; font-size: 12px;">Fiat Panda Hybrid</span>
         </div>
         <div class="asset-tile" onclick="avviaApp('corsa')">
             <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate interaction-prompt="none"></model-viewer>
-            <span style="font-weight:700; font-size: 14px;">Opel Corsa 1.2</span>
+            <span style="font-weight:700; font-size: 12px;">Opel Corsa 1.2</span>
         </div>
     </div>
 </div>
 
 <div id="archive-modal">
     <div id="archive-content">
-        <h2 style="font-size: 18px; margin-top: 0;">Archivio Spese & Saldi Smart</h2>
+        <h2 style="font-size: 16px; margin-top: 0; margin-bottom: 10px;">Archivio Spese & Saldi</h2>
         
-        <div class="flex-box" style="margin-bottom: 15px;">
-            <div class="flex-child" style="background: #E5E5EA; padding: 12px; border-radius:12px;">
-                <span style="font-size:11px; font-weight:bold; color:#666;">RIMANENZA CASSA COMUNE</span>
-                <div id="modal-cassa-rimanente" style="font-size:20px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
+        <div class="flex-box" style="margin-bottom: 10px;">
+            <div class="flex-child" style="background: #E5E5EA; padding: 10px; border-radius:10px;">
+                <span style="font-size:10px; font-weight:bold; color:#666;">RIMANENZA CASSA COMUNE</span>
+                <div id="modal-cassa-rimanente" style="font-size:18px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
             </div>
         </div>
 
@@ -405,7 +442,7 @@
                 <div id="mini-car-box">
                     <model-viewer id="dashboard-viewer" auto-rotate bounds="tight" camera-orbit="45deg 75deg 105%" disable-zoom interaction-prompt="none" onclick="apriArchivio()"></model-viewer>
                 </div>
-                <h2 id="car-title-display" style="font-size:13px; text-align:center; margin-top:0; margin-bottom:8px;">Navigatore</h2>
+                <h2 id="car-title-display" style="font-size:12px; text-align:center; margin-top:0; margin-bottom:6px;">Navigatore</h2>
                 
                 <label>Giorno di Viaggio</label>
                 <div id="day-selector-pills" class="horizontal-pills"></div>
@@ -432,8 +469,8 @@
 
             <div class="tile">
                 <label>Logistica e Pedaggi</label>
-                <div id="guide-content" style="font-size:12px;">Seleziona un giorno.</div>
-                <div style="margin-top:4px;">
+                <div id="guide-content" style="font-size:11px; line-height: 1.2;">Seleziona un giorno.</div>
+                <div style="margin-top:2px;">
                     <a href="https://www.autostrade.it/it/pedaggio-autostradale" target="_blank" class="toll-link">Tariffe Italia ↗</a>
                     <a href="https://www.vinci-autoroutes.com/fr/autoroutes-temps-reel/" target="_blank" class="toll-link">Tariffe Francia ↗</a>
                 </div>
@@ -441,14 +478,14 @@
 
             <div class="tile" style="background: #F9F9FB;">
                 <label style="color: #2E7D32; font-weight: 800;">💰 Controllo Cassa Comune</label>
-                <div class="flex-box" style="margin-top: 4px;">
+                <div class="flex-box" style="margin-top: 2px;">
                     <div class="flex-child">
                         <label>Fondo Iniziale (€)</label>
                         <input type="number" id="cassa-iniziale" value="500" onchange="aggiornaCassaComune()">
                     </div>
                     <div class="flex-child" style="text-align: right;">
                         <label>Disponibilità</label>
-                        <div id="cassa-rimanente" style="font-size: 16px; font-weight: 800; color: #1B5E20; margin-top: 8px;">500.00 €</div>
+                        <div id="cassa-rimanente" style="font-size: 14px; font-weight: 800; color: #1B5E20; margin-top: 6px;">500.00 €</div>
                     </div>
                 </div>
             </div>
@@ -456,29 +493,29 @@
             <div class="tile" id="results-tile" style="display:none;">
                 <label style="color:var(--cp-blue); font-weight:800;">Stima Benzina Smart: <span id="hint-fuel">0.00</span>€</label>
                 
-                <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px; margin-bottom:10px;">
+                <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px; margin-bottom:8px;">
                     <div class="flex-box">
                         <div class="input-group-box">
-                            <label>⛽ Benzina Reale (€)</label>
+                            <label>⛽ Benzina (€)</label>
                             <input type="number" id="actual-fuel" value="0" oninput="aggiornaTotale()">
-                            <label>Chi Paga?</label>
+                            <label>Chi?</label>
                             <select id="payer-fuel">
                                 <option value="cassa">💳 Cassa</option>
                                 <option value="mario">👨‍✈️ Mario</option>
-                                <option value="samuele">👦 Samuele</option>
-                                <option value="michael">👱 Michael</option>
+                                <option value="samuele">👦 Samu</option>
+                                <option value="michael">👱 Mich</option>
                             </select>
                         </div>
                         
                         <div class="input-group-box">
-                            <label>🛣️ Pedaggi Reali (€)</label>
+                            <label>🛣️ Pedaggi (€)</label>
                             <input type="number" id="actual-toll" value="0" oninput="aggiornaTotale()">
-                            <label>Chi Paga?</label>
+                            <label>Chi?</label>
                             <select id="payer-toll">
                                 <option value="cassa">💳 Cassa</option>
                                 <option value="mario">👨‍✈️ Mario</option>
-                                <option value="samuele">👦 Samuele</option>
-                                <option value="michael">👱 Michael</option>
+                                <option value="samuele">👦 Samu</option>
+                                <option value="michael">👱 Mich</option>
                             </select>
                         </div>
                     </div>
@@ -490,8 +527,8 @@
                         <select id="payer-extra">
                             <option value="cassa">💳 Cassa</option>
                             <option value="mario">👨‍✈️ Mario</option>
-                            <option value="samuele">👦 Samuele</option>
-                            <option value="michael">👱 Michael</option>
+                            <option value="samuele">👦 Samu</option>
+                            <option value="michael">👱 Mich</option>
                         </select>
                     </div>
                 </div>
@@ -499,7 +536,7 @@
                 <button class="btn btn-success" onclick="salvaArchivio()">SALVA IN ARCHIVIO</button>
 
                 <div class="total-banner">
-                    <div id="km-display" style="font-size:11px; font-weight:800; margin-bottom:2px;">-- KM TOTALI</div>
+                    <div id="km-display" style="font-size:10px; font-weight:800; margin-bottom:2px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
                 </div>
             </div>
@@ -548,8 +585,6 @@
 
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
     let databaseArray = []; 
-    let isFirstLoad = true; 
-    let myLastActionId = null; 
 
     function abilitaTrascina(selettore) {
         const containers = document.querySelectorAll(selettore);
@@ -557,27 +592,21 @@
             let isDown = false, startX, scrollLeft;
             slider.addEventListener('mousedown', (e) => {
                 isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
-                slider.style.cursor = 'grabbing';
             });
-            slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'default'; });
-            slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
+            slider.addEventListener('mouseleave', () => { isDown = false; });
+            slider.addEventListener('mouseup', () => { isDown = false; });
             slider.addEventListener('mousemove', (e) => {
                 if (!isDown) return;
                 e.preventDefault(); const x = e.pageX - slider.offsetLeft;
                 const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
             });
-            slider.style.cursor = 'grab';
         });
     }
 
     function avviaApp(id) {
-        if ("Notification" in window) {
-            Notification.requestPermission();
-        }
-
         activeCar = carConfig[id];
         document.getElementById('landing-page').style.display = 'none';
-        document.getElementById('main-app').style.display = 'grid';
+        document.getElementById('main-app').style.display = 'flex';
         
         const viewer = document.getElementById('dashboard-viewer');
         viewer.src = activeCar.file;
@@ -613,15 +642,6 @@
         setTimeout(() => { map.invalidateSize(); }, 400);
     }
 
-    function inviaNotifica(titolo, testo) {
-        if ("vibrate" in navigator) {
-            navigator.vibrate([200, 100, 200]);
-        }
-        if ("Notification" in window && Notification.permission === "granted") {
-            new Notification(titolo, { body: testo, icon: "💶" });
-        }
-    }
-
     function attivaSincronizzazioneFirebase() {
         if (!window.db || !window.firestoreLib) {
             setTimeout(attivaSincronizzazioneFirebase, 500);
@@ -634,25 +654,7 @@
             snapshot.forEach((doc) => {
                 nuoviDati.push({ firebaseId: doc.id, ...doc.data() });
             });
-
-            if (!isFirstLoad) {
-                if (nuoviDati.length > databaseArray.length) {
-                    let aggiunta = nuoviDati.find(n => !databaseArray.some(o => o.id === n.id));
-                    if (aggiunta && aggiunta.id !== myLastActionId) {
-                        inviaNotifica("💰 Nuova Spesa Registrata!", `${aggiunta.tratta}: ${aggiunta.totale.toFixed(2)}€`);
-                    }
-                } else if (nuoviDati.length < databaseArray.length) {
-                    let eliminata = databaseArray.find(o => !nuoviDati.some(n => n.id === o.id));
-                    if (eliminata && eliminata.id !== myLastActionId) {
-                        inviaNotifica("❌ Spesa Eliminata Online", `${eliminata.tratta} da ${eliminata.totale.toFixed(2)}€ rimossa.`);
-                    }
-                }
-            }
-            
-            myLastActionId = null;
-            isFirstLoad = false;
             databaseArray = nuoviDati;
-            
             aggiornaCassaComune();
             renderizzaTabellaArchivio();
         });
@@ -714,12 +716,11 @@
             const fuelHint = (currentKm / activeCar.consumption) * fPrice;
             document.getElementById("hint-fuel").innerText = fuelHint.toFixed(2);
             
-            document.getElementById("km-display").innerText = currentKm + " CHILOMETRI";
+            document.getElementById("km-display").innerText = currentKm + " KM";
             document.getElementById("results-tile").style.display = "block";
 
             if (routeLayer) map.removeLayer(routeLayer);
-            routeLayer = L.geoJSON(route.geometry, { style: { color: "#007AFF", weight: 6 } }).addTo(map);
-            routeLayer.bindPopup(`<b>Percorso: ${currentKm} KM</b>`).openPopup();
+            routeLayer = L.geoJSON(route.geometry, { style: { color: "#007AFF", weight: 5 } }).addTo(map);
             map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
             
             aggiornaTotale();
@@ -742,16 +743,10 @@
         const pToll = document.getElementById("payer-toll").value;
         const pExtra = document.getElementById("payer-extra").value;
 
-        if((b+t+e) === 0) {
-            alert("Inserisci almeno una spesa prima di salvare!");
-            return;
-        }
-
-        const actionId = Date.now();
-        myLastActionId = actionId;
+        if((b+t+e) === 0) return;
 
         const nuovaSpesa = {
-            id: actionId,
+            id: Date.now(),
             giorno: currentDay,
             tratta: `${document.getElementById("start").value} → ${document.getElementById("end").value}`,
             benzina: b,
@@ -766,90 +761,68 @@
         try {
             const { collection, addDoc } = window.firestoreLib;
             await addDoc(collection(window.db, "tripArch_v11"), nuovaSpesa);
-            alert("Spesa salvata con successo! 🎉");
-            
             document.getElementById("actual-fuel").value = 0;
             document.getElementById("actual-toll").value = 0;
             document.getElementById("actual-extra").value = 0;
             aggiornaTotale();
-        } catch (errore) {
-            console.error(errore);
-            myLastActionId = null;
-            alert("Errore nel salvataggio. Riprova!");
-        }
+            alert("Salvato! 👍");
+        } catch (errore) { alert("Errore salvataggio cloud."); }
     }
 
     async function eliminaVoce(firebaseId) {
-        let elemento = databaseArray.find(item => item.firebaseId === firebaseId);
-        if(!elemento) return;
-
-        if(confirm("Vuoi davvero cancellare questa spesa?")) {
-            myLastActionId = elemento.id;
+        if(confirm("Vuoi cancellare questa spesa?")) {
             try {
                 const { doc, deleteDoc } = window.firestoreLib;
                 await deleteDoc(doc(window.db, "tripArch_v11", firebaseId));
-                alert("Spesa rimossa!");
-            } catch (errore) {
-                console.error(errore);
-                myLastActionId = null;
-                alert("Errore nell'eliminazione.");
-            }
+            } catch (errore) { alert("Errore."); }
         }
     }
 
     function formattaPagatore(tipo, chi) {
         if(tipo === 0) return "";
-        const icone = { cassa: "💳", mario: "👨‍✈️ M", samuele: "👦 S", michael: "👱 Mi" };
+        const icone = { cassa: "💳", mario: "M", samuele: "S", michael: "Mi" };
         return `${icone[chi] || chi}`;
     }
 
     function aggiornaCassaComune() {
         const budgetIniziale = parseFloat(document.getElementById("cassa-iniziale").value) || 0;
         localStorage.setItem("cassa_iniziale_v11", budgetIniziale);
-        
         let spesoCassa = 0;
         databaseArray.forEach(item => {
             if(item.benzina > 0 && item.payerFuel === 'cassa') spesoCassa += item.benzina;
             if(item.pedaggi > 0 && item.payerToll === 'cassa') spesoCassa += item.pedaggi;
             if(item.extra > 0 && item.payerExtra === 'cassa') spesoCassa += item.extra;
         });
-
         const rimanenza = budgetIniziale - spesoCassa;
         document.getElementById("cassa-rimanente").innerText = rimanenza.toFixed(2) + " €";
         document.getElementById("modal-cassa-rimanente").innerText = rimanenza.toFixed(2) + " €";
     }
 
-    function apriArchivio() {
-        document.getElementById("archive-modal").style.display = "flex";
-    }
+    function apriArchivio() { document.getElementById("archive-modal").style.display = "flex"; }
+    function chiudiArchivio() { document.getElementById("archive-modal").style.display = "none"; }
+    function rilevaGPS() { navigator.geolocation.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos.coords.longitude], 13)); }
 
     function renderizzaTabellaArchivio() {
         document.getElementById("archive-list").innerHTML = databaseArray.map(i => {
             let detf = i.benzina > 0 ? `B:${formattaPagatore(i.benzina, i.payerFuel)}` : '';
             let dett = i.pedaggi > 0 ? `P:${formattaPagatore(i.pedaggi, i.payerToll)}` : '';
             let dete = i.extra > 0 ? `E:${formattaPagatore(i.extra, i.payerExtra)}` : '';
-            let stringaDettaglio = [detf, dett, dete].filter(Boolean).join(" | ");
+            let stringaDettaglio = [detf, dett, dete].filter(Boolean).join("|");
 
             return `<tr>
                 <td>${i.giorno} Ago</td><td>${i.tratta}</td><td>${i.benzina}€</td><td>${i.pedaggi}€</td><td>${i.extra}€</td><td><b>${i.totale.toFixed(2)}€</b></td><td><small>${stringaDettaglio}</small></td>
                 <td><button class="delete-btn" onclick="eliminaVoce('${i.firebaseId}')">❌</button></td>
             </tr>`;
         }).join("");
-
         calcolaContiIntelligenti(databaseArray);
     }
-
-    function chiudiArchivio() { document.getElementById("archive-modal").style.display = "none"; }
-    function rilevaGPS() { navigator.geolocation.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos.coords.longitude], 13)); }
 
     function calcolaContiIntelligenti(arch) {
         let bilancioP1 = { mario: 0, samuele: 0, michael: 0 };
         let bilancioP2 = { mario: 0, michael: 0 };
 
         arch.forEach(spesa => {
-            const giornoNum = parseInt(spesa.giorno);
-            const isPeriodo1 = giornoNum <= 7;
-
+            const isPeriodo1 = parseInt(spesa.giorno) <= 7;
             const scomp = [
                 { importo: spesa.benzina, pagatore: spesa.payerFuel },
                 { importo: spesa.pedaggi, pagatore: spesa.payerToll },
@@ -858,17 +831,13 @@
 
             scomp.forEach(v => {
                 if (v.importo <= 0 || v.pagatore === 'cassa') return;
-
                 if (isPeriodo1) {
                     let quota = v.importo / 3;
-                    bilancioP1.mario -= quota;
-                    bilancioP1.samuele -= quota;
-                    bilancioP1.michael -= quota;
+                    bilancioP1.mario -= quota; bilancioP1.samuele -= quota; bilancioP1.michael -= quota;
                     if (bilancioP1[v.pagatore] !== undefined) bilancioP1[v.pagatore] += v.importo;
                 } else {
                     let quota = v.importo / 2;
-                    bilancioP2.mario -= quota;
-                    bilancioP2.michael -= quota;
+                    bilancioP2.mario -= quota; bilancioP2.michael -= quota;
                     if (bilancioP2[v.pagatore] !== undefined) bilancioP2[v.pagatore] += v.importo;
                 }
             });
@@ -880,31 +849,21 @@
 
     function generaRisoluzioneDebiti(bilancio) {
         let dare = [], avere = [];
-        
         for (let persona in bilancio) {
             let val = parseFloat(bilancio[persona].toFixed(2));
             if (val < -0.02) dare.push({ nome: persona, importo: Math.abs(val) });
             else if (val > 0.02) avere.push({ nome: persona, importo: val });
         }
-
-        let output = "";
-        let i = 0, j = 0;
-
+        let output = "", i = 0, j = 0;
         while (i < dare.length && j < avere.length) {
-            let debitore = dare[i];
-            let creditore = avere[j];
+            let debitore = dare[i], creditore = avere[j];
             let importoMinimo = Math.min(debitore.importo, creditore.importo);
-
-            output += `<div class="debt-line">🫱 <b>${debitore.nome.toUpperCase()}</b> deve dare <b>${importoMinimo.toFixed(2)} €</b> a <b>${creditore.nome.toUpperCase()}</b></div>`;
-
-            debitore.importo -= importoMinimo;
-            creditore.importo -= importoMinimo;
-
+            output += `<div class="debt-line">🫱 <b>${debitore.nome.toUpperCase()}</b> → <b>${importoMinimo.toFixed(2)} €</b> a <b>${creditore.nome.toUpperCase()}</b></div>`;
+            debitore.importo -= importoMinimo; creditore.importo -= importoMinimo;
             if (debitore.importo < 0.02) i++;
             if (creditore.importo < 0.02) j++;
         }
-
-        return output === "" ? "Tutti i conti sono in pari!" : output;
+        return output === "" ? "In pari!" : output;
     }
 </script>
 </body>
