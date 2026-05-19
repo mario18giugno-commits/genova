@@ -835,19 +835,28 @@
 
     function renderizzaTabellaArchivio() {
         document.getElementById("archive-list").innerHTML = databaseArray.map(i => {
-            let detf = i.benzina > 0 ? `B:${formattaPagatore(i.benzina, i.payerFuel)}` : '';
-            let dett = i.pedaggi > 0 ? `P:${formattaPagatore(i.pedaggi, i.payerToll)}` : '';
-            let dete = i.extra > 0 ? `E:${formattaPagatore(i.extra, i.payerExtra)}` : '';
-            let stringaDettaglio = [detf, dett, dete].filter(Boolean).join("|");
+            // Funzione interna per creare un "badge" leggibile
+            const creaBadge = (importo, pagatore) => {
+                if (!importo || importo <= 0) return "";
+                const colori = { cassa: "#007AFF", mario: "#FF9500", samuele: "#34C759", michael: "#5856D6" };
+                const nomi = { cassa: "💳", mario: "M", samuele: "S", michael: "Mi" };
+                return `<span style="background:${colori[pagatore]}; color:white; padding:2px 6px; border-radius:6px; font-size:10px; margin:2px; display:inline-block; font-weight:bold;">
+                    ${nomi[pagatore] || pagatore}
+                </span>`;
+            };
 
             return `<tr>
-                <td>${i.giorno} Ago</td><td>${i.tratta}</td><td>${i.benzina}€</td><td>${i.pedaggi}€</td><td>${i.extra}€</td><td><b>${i.totale.toFixed(2)}€</b></td><td><small>${stringaDettaglio}</small></td>
+                <td>${i.giorno} Ago</td>
+                <td>${i.tratta}</td>
+                <td>${i.benzina > 0 ? i.benzina + '€' : ''} ${creaBadge(i.benzina, i.payerFuel)}</td>
+                <td>${i.pedaggi > 0 ? i.pedaggi + '€' : ''} ${creaBadge(i.pedaggi, i.payerToll)}</td>
+                <td>${i.extra > 0 ? i.extra + '€' : ''} ${creaBadge(i.extra, i.payerExtra)}</td>
+                <td><b>${(i.totale || 0).toFixed(2)}€</b></td>
                 <td><button class="delete-btn" onclick="eliminaVoce('${i.firebaseId}')">❌</button></td>
             </tr>`;
         }).join("");
         calcolaContiIntelligenti(databaseArray);
     }
-
     function calcolaContiIntelligenti(arch) {
         let bilancioP1 = { mario: 0, samuele: 0, michael: 0 };
         let bilancioP2 = { mario: 0, michael: 0 };
