@@ -19,6 +19,7 @@
             --cp-blue: #007AFF;
             --cp-green: #34C759;
             --cp-orange: #FF9500;
+            --cp-dark: #1C1C1E;
         }
 
         body, html { 
@@ -40,11 +41,10 @@
             height: 100vh;
             height: 100dvh;
             box-sizing: border-box;
-            /* Rileva automaticamente la presenza del notch a destra o a sinistra */
             padding-left: env(safe-area-inset-left, 0px);
             padding-right: env(safe-area-inset-right, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
-            background: #E5E5EA; /* Colore di sfondo della dock per continuità sotto il notch */
+            background: #E5E5EA; 
         }
 
         /* Istruzioni per installazione iniziale in Safari */
@@ -143,7 +143,7 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; /* Centra perfettamente i tasti in verticale */
+            justify-content: center; 
             gap: 20px; 
             height: 100%;
             box-sizing: border-box;
@@ -276,14 +276,21 @@
 
         .btn-primary { background: var(--cp-blue); color: #fff; }
         .btn-success { background: var(--cp-green); color: white; }
-        .btn-outline-navigation { 
-            background: #FFFFFF; 
-            color: var(--cp-blue); 
-            border: 2px solid var(--cp-blue); 
-            margin-top: 6px;
+        
+        /* NUOVO LOOK PREMIUM PER IL PULSANTE STRADALE MAPPE */
+        .btn-maps-premium { 
+            background: var(--cp-dark); 
+            color: #FFFFFF; 
+            border: none;
+            margin-top: 8px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: background 0.15s ease;
         }
-        .btn-outline-navigation:active {
-            background: #EEF6FF;
+        .btn-maps-premium:active {
+            background: #2C2C2E;
         }
         
         #map { 
@@ -373,7 +380,6 @@
             flex: 1;
         }
 
-        /* Disabilita l'app se lasciata in verticale */
         @media (orientation: portrait) {
             #rotate-warning { display: flex; }
             #main-app { display: none !important; }
@@ -494,8 +500,8 @@
                 <label>Logistica e Pedaggi</label>
                 <div id="guide-content" style="font-size:11px; line-height: 1.2;">Seleziona un giorno.</div>
                 <div style="margin-top:2px;">
-                    <a href="https://www.autostrade.it/it/pedaggio-autostradale" target="_blank" class="toll-link">Tariffe Italia ↗</a>
-                    <a href="https://www.vinci-autoroutes.com/fr/autoroutes-temps-reel/" target="_blank" class="toll-link">Tariffe Francia ↗</a>
+                    <a href="https://www.unipolmove.it/calcola-pedaggio/" target="_blank" class="toll-link">Tariffe Italia ↗</a>
+                    <a href="https://www.vinci-autoroutes.com/fr/conseils/autoroute-mode-demploi/tarifs-peage-vinci-autoroutes/" target="_blank" class="toll-link">Tariffe Francia ↗</a>
                 </div>
             </div>
 
@@ -561,7 +567,7 @@
                 <div class="total-banner">
                     <div id="km-display" style="font-size:10px; font-weight:800; margin-bottom:2px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
-                    <button class="btn btn-outline-navigation" onclick="apriNavigatoreEsterno()">APRI IN MAPPE ↗</button>
+                    <button class="btn btn-maps-premium" onclick="apriNavigatoreEsterno()">Avvia Navigazione 🧭</button>
                 </div>
             </div>
         </div>
@@ -754,8 +760,6 @@
     function apriNavigatoreEsterno() {
         const partenza = encodeURIComponent(document.getElementById("start").value);
         const arrivo = encodeURIComponent(document.getElementById("end").value);
-        
-        // Stringa URL universale che apre Apple Maps su iOS o Google Maps ovunque
         const urlmappe = `https://maps.google.com/?saddr=${partenza}&daddr=${arrivo}&dirflg=d`;
         window.open(urlmappe, '_blank');
     }
