@@ -589,24 +589,6 @@
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyA-3oHPE-xos-IDjCKn8RobNf5HRRmmmJE",
-        authDomain: "genova-8a728.firebaseapp.com",
-        projectId: "genova-8a728",
-        storageBucket: "genova-8a728.firebasestorage.app",
-        messagingSenderId: "770715284214",
-        appId: "1:770715284214:web:40ddc4a564f0347e3a72d7"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    window.db = db;
-    console.log("Database pronto!");
-</script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -914,6 +896,31 @@
         }
         return output === "" ? "In pari!" : output;
     }
+</script>
+<script type="module">
+  // 1. Importa le funzioni necessarie
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+  // 2. Configurazione del nuovo progetto
+  const firebaseConfig = {
+    apiKey: "AIzaSyA_m5HaUtiSxtnRXe9Gp9VtZ7fU6RfgDYI",
+    authDomain: "viaggiogenovafinale.firebaseapp.com",
+    projectId: "viaggiogenovafinale",
+    storageBucket: "viaggiogenovafinale.firebasestorage.app",
+    messagingSenderId: "575085388587",
+    appId: "1:575085388587:web:4eda7079b957d3a68f9b6e"
+  };
+
+  // 3. Inizializzazione
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 4. Esportazione per far funzionare le tue funzioni (salvataggio/cancellazione)
+  window.db = db;
+  window.firestoreLib = { collection, onSnapshot, addDoc, doc, deleteDoc };
+
+  console.log("Firebase e Firestore inizializzati correttamente!");
 </script>
 </body>
 </html>
