@@ -452,7 +452,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     const carConfig = {
-        // Aggiornati percorsi dei file interni a carConfig per GitHub
         panda: { name: "Fiat Panda Hybrid 2024", consumption: 18.0, file: "fiat_panda-v1.glb", center: "auto" },
         corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
     };
@@ -469,6 +468,8 @@
 
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
     let databaseArray = []; 
+    let isFirstLoad = true; 
+    let myLastActionId = null; 
 
     function abilitaTrascina(selettore) {
         const containers = document.querySelectorAll(selettore);
@@ -490,6 +491,11 @@
     }
 
     function avviaApp(id) {
+        // Richiede il permesso per inviare notifiche di sistema sullo schermo
+        if ("Notification" in window) {
+            Notification.requestPermission();
+        }
+
         activeCar = carConfig[id];
         document.getElementById('landing-page').style.display = 'none';
         document.getElementById('main-app').style.display = 'grid';
@@ -525,6 +531,21 @@
         attivaSincronizzazioneFirebase();
     }
 
+    function inviaNotifica(titolo, testo) {
+        // Suono/Vibrazione in-app
+        if ("vibrate" in navigator) {
+            navigator.vibrate([200, 100, 200]);
+        }
+        
+        // Notifica di sistema del browser/telefono
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(titolo, { body: testo, icon: "💶" });
+        } else {
+            // Fallback se le notifiche sono disattivate
+            console.log(`${titolo}: ${testo}`);
+        }
+    }
+
     function attivaSincronizzazioneFirebase() {
         if (!window.db || !window.firestoreLib) {
             setTimeout(attivaSincronizzazioneFirebase, 500);
@@ -533,14 +554,34 @@
         const { collection, onSnapshot } = window.firestoreLib;
         
         onSnapshot(collection(window.db, "tripArch_v11"), (snapshot) => {
-            databaseArray = [];
+            let nuoviDati = [];
             snapshot.forEach((doc) => {
-                databaseArray.push({ firebaseId: doc.id, ...doc.data() });
+                nuoviDati.push({ firebaseId: doc.id, ...doc.data() });
             });
-            aggiornaCassaComune();
-            if (document.getElementById("archive-modal").style.display === "flex") {
-                renderizzaTabellaArchivio();
+
+            // Gestione notifiche intelligenti
+            if (!isFirstLoad) {
+                if (nuoviDati.length > databaseArray.length) {
+                    // È stata aggiunta una spesa
+                    let aggiunta = nuoviDati.find(n => !databaseArray.some(o => o.id === n.id));
+                    if (aggiunta && aggiunta.id !== myLastActionId) {
+                        inviaNotifica("💰 Nuova Spesa Registrata!", `${aggiunta.tratta}: ${aggiunta.totale.toFixed(2)}€`);
+                    }
+                } else if (nuoviDati.length < databaseArray.length) {
+                    // È stata eliminata una spesa
+                    let eliminata = databaseArray.find(o => !nuoviDati.some(n => n.id === o.id));
+                    if (eliminata && eliminata.id !== myLastActionId) {
+                        inviaNotifica("❌ Spesa Eliminata Online", `${eliminata.tratta} da ${eliminata.totale.toFixed(2)}€ rimossa.`);
+                    }
+                }
             }
+            
+            myLastActionId = null; // Reset del flag interno
+            isFirstLoad = false;
+            databaseArray = nuoviDati;
+            
+            aggiornaCassaComune();
+            renderizzaTabellaArchivio();
         });
     }
 
@@ -633,8 +674,11 @@
             return;
         }
 
+        const actionId = Date.now();
+        myLastActionId = actionId; // Blocca la notifica sul proprio telefono
+
         const nuovaSpesa = {
-            id: Date.now(),
+            id: actionId,
             giorno: currentDay,
             tratta: `${document.getElementById("start").value} → ${document.getElementById("end").value}`,
             benzina: b,
@@ -657,22 +701,24 @@
             aggiornaTotale();
         } catch (errore) {
             console.error(errore);
+            myLastActionId = null;
             alert("Errore durante il salvataggio online. Riprova!");
         }
     }
 
-    function BlacklistVoci(id) { 
-        eliminaVoce(id);
-    }
-
     async function eliminaVoce(firebaseId) {
+        let elemento = databaseArray.find(item => item.firebaseId === firebaseId);
+        if(!elemento) return;
+
         if(confirm("Vuoi davvero cancellare questa spesa dall'archivio online?")) {
+            myLastActionId = elemento.id; // Blocca la notifica sul proprio telefono per questa eliminazione
             try {
                 const { doc, deleteDoc } = window.firestoreLib;
                 await deleteDoc(doc(window.db, "tripArch_v11", firebaseId));
                 alert("Spesa rimossa con successo!");
             } catch (errore) {
                 console.error(errore);
+                myLastActionId = null;
                 alert("Impossibile eliminare la voce.");
             }
         }
@@ -701,8 +747,6 @@
     }
 
     function apriArchivio() {
-        aggiornaCassaComune();
-        renderizzaTabellaArchivio();
         document.getElementById("archive-modal").style.display = "flex";
     }
 
@@ -747,12 +791,12 @@
                     bilancioP1.mario -= quota;
                     bilancioP1.samuele -= quota;
                     bilancioP1.michael -= quota;
-                    bilancioP1[v.pagatore] += v.importo;
+                    if (bilancioP1[v.pagatore] !== undefined) bilancioP1[v.pagatore] += v.importo;
                 } else {
                     let quota = v.importo / 2;
                     bilancioP2.mario -= quota;
                     bilancioP2.michael -= quota;
-                    bilancioP2[v.pagatore] += v.importo;
+                    if (bilancioP2[v.pagatore] !== undefined) bilancioP2[v.pagatore] += v.importo;
                 }
             });
         });
