@@ -135,32 +135,32 @@
             height: 75%;
         }
 
-        /* DOCK LATERALE CORRETTA: Centrata e fluida */
+        /* DOCK LATERALE CORRETTA */
         #dock { 
-            width: 70px;
+            width: 75px;
             background: #E5E5EA; 
             border-right: 1px solid #C6C6C8; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            gap: 20px; 
+            gap: 22px; 
             height: 100%;
             box-sizing: border-box;
             z-index: 10;
         }
 
         .dock-icon { 
-            width: 48px; 
-            height: 48px; 
-            border-radius: 12px; 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 14px; 
             background: #fff; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            font-size: 20px; 
+            font-size: 24px; 
             cursor: pointer; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             transition: transform 0.1s ease;
         }
 
@@ -176,15 +176,16 @@
             background: var(--cp-bg);
         }
 
+        /* DASHBOARD ALLARGATA E AGGIORNATA */
         #dashboard { 
-            width: 35%;
-            min-width: 295px;
-            max-width: 380px;
-            padding: 10px; 
+            width: 38%;
+            min-width: 320px;
+            max-width: 420px;
+            padding: 12px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
+            gap: 12px; 
             box-sizing: border-box;
             height: 100%;
             background: var(--cp-bg);
@@ -193,16 +194,16 @@
 
         .tile { 
             background: #fff; 
-            border-radius: 14px; 
-            padding: 12px; 
+            border-radius: 16px; 
+            padding: 14px; 
             border: 1px solid #D1D1D6; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.03); 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
         }
 
         #mini-car-box {
-            height: 65px;
+            height: 70px;
             width: 100%;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         #mini-car-box model-viewer {
@@ -215,8 +216,8 @@
             overflow-x: auto; 
             overflow-y: hidden; 
             width: 100%; 
-            padding: 4px 0; 
-            gap: 6px;
+            padding: 6px 0; 
+            gap: 8px;
             scroll-behavior: smooth;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
@@ -224,14 +225,15 @@
 
         .horizontal-pills::-webkit-scrollbar { display: none; }
 
+        /* PILLOLE PIÙ GRANDI ED ACCESSIBILI */
         .pill { 
             flex: 0 0 auto;
-            padding: 6px 12px; 
+            padding: 8px 14px; 
             background: #E5E5EA; 
-            border-radius: 8px; 
-            font-size: 11px; 
-            font-weight: 600; 
-            color: #48484A; 
+            border-radius: 10px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #3A3A3C; 
             border: none; 
         }
 
@@ -240,50 +242,59 @@
             color: white; 
         }
 
+        /* INPUT E SELECT PIÙ ALTI E CON TESTO GRANDE */
         input, select { 
             width: 100%; 
-            padding: 8px; 
-            border-radius: 8px; 
-            border: 1px solid #D1D1D6; 
+            padding: 10px; 
+            border-radius: 10px; 
+            border: 1px solid #C6C6C8; 
             background: #F2F2F7; 
-            margin-bottom: 4px; 
-            font-size: 12px; 
+            margin-bottom: 6px; 
+            font-size: 14px; 
+            font-weight: 600;
             box-sizing: border-box;
+            color: #1C1C1E;
         }
 
+        /* ETICHETTE DISCRETI MA COSPICUE */
         label { 
-            font-size: 10px; 
+            font-size: 11px; 
             text-transform: uppercase; 
             font-weight: 800; 
-            color: #8E8E93; 
-            margin-bottom: 2px; 
+            color: #636366; 
+            margin-bottom: 4px; 
             display: block; 
+            letter-spacing: 0.3px;
         }
         
+        /* BOTTONI GRANDI */
         .btn { 
             width: 100%; 
-            height: 38px; 
+            height: 44px; 
             border: none; 
-            border-radius: 10px; 
-            font-size: 13px; 
+            border-radius: 12px; 
+            font-size: 14px; 
             font-weight: 700; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            margin-bottom: 4px; 
+            margin-bottom: 6px; 
         }
 
         .btn-primary { background: var(--cp-blue); color: #fff; }
-        .btn-success { background: var(--cp-green); color: white; }
+        .btn-success { background: var(--cp-green); color: white; font-size: 15px; }
         
-        /* NUOVO LOOK PREMIUM PER IL PULSANTE STRADALE MAPPE */
         .btn-maps-premium { 
+            width: 100%;
+            height: 44px;
             background: var(--cp-dark); 
             color: #FFFFFF; 
             border: none;
-            margin-top: 8px;
-            font-size: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 700;
             letter-spacing: 0.5px;
             text-transform: uppercase;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -302,13 +313,13 @@
         .total-banner { 
             background: #34C759; 
             color: #fff; 
-            border-radius: 10px; 
-            padding: 10px; 
+            border-radius: 12px; 
+            padding: 12px; 
             text-align: center; 
-            margin-top: 8px; 
+            margin-top: 10px; 
         }
 
-        #val-total { font-size: 22px; font-weight: 800; }
+        #val-total { font-size: 26px; font-weight: 900; }
         
         #archive-modal { 
             position: fixed; 
@@ -334,7 +345,7 @@
         }
 
         .archive-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        .archive-table th, .archive-table td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 11px; }
+        .archive-table th, .archive-table td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 12px; }
 
         .delete-btn {
             background: #FF3B30;
@@ -348,18 +359,19 @@
 
         .toll-link { 
             color: var(--cp-blue); 
-            font-weight: bold; 
+            font-weight: 800; 
             text-decoration: none; 
-            font-size: 10px; 
-            border: 1px solid var(--cp-blue); 
-            padding: 4px 8px; 
-            border-radius: 5px; 
-            margin-right: 4px; 
+            font-size: 12px; 
+            border: 1.5px solid var(--cp-blue); 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            margin-right: 6px; 
             display: inline-block; 
-            margin-top: 4px;
+            margin-top: 6px;
+            background: #FFFFFF;
         }
 
-        .flex-box { display: flex; gap: 6px; }
+        .flex-box { display: flex; gap: 8px; }
         .flex-child { flex: 1; }
 
         .balance-box {
@@ -369,14 +381,15 @@
             margin-top: 6px;
             border-left: 4px solid var(--cp-orange);
         }
-        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 2px; font-size: 11px; }
-        .debt-line { font-size: 11px; margin: 2px 0; color: #3A3A3C; }
+        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 2px; font-size: 12px; }
+        .debt-line { font-size: 12px; margin: 2px 0; color: #3A3A3C; }
 
+        /* BLOCCHETTI INPUT COMODI DA DIGITARE */
         .input-group-box {
             background: #F9F9FB;
-            padding: 6px;
-            border-radius: 8px;
-            border: 1px solid #E5E5EA;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #D1D1D6;
             flex: 1;
         }
 
@@ -411,23 +424,23 @@
     <div class="asset-container">
         <div class="asset-tile" onclick="avviaApp('panda')">
             <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight" interaction-prompt="none"></model-viewer>
-            <span style="font-weight:700; font-size: 12px;">Fiat Panda Hybrid</span>
+            <span style="font-weight:700; font-size: 14px;">Fiat Panda Hybrid</span>
         </div>
         <div class="asset-tile" onclick="avviaApp('corsa')">
             <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate interaction-prompt="none"></model-viewer>
-            <span style="font-weight:700; font-size: 12px;">Opel Corsa 1.2</span>
+            <span style="font-weight:700; font-size: 14px;">Opel Corsa 1.2</span>
         </div>
     </div>
 </div>
 
 <div id="archive-modal">
     <div id="archive-content">
-        <h2 style="font-size: 16px; margin-top: 0; margin-bottom: 10px;">Archivio Spese & Saldi</h2>
+        <h2 style="font-size: 18px; margin-top: 0; margin-bottom: 12px;">Archivio Spese & Saldi</h2>
         
         <div class="flex-box" style="margin-bottom: 10px;">
-            <div class="flex-child" style="background: #E5E5EA; padding: 10px; border-radius:10px;">
-                <span style="font-size:10px; font-weight:bold; color:#666;">RIMANENZA CASSA COMUNE</span>
-                <div id="modal-cassa-rimanente" style="font-size:18px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
+            <div class="flex-child" style="background: #E5E5EA; padding: 12px; border-radius:12px;">
+                <span style="font-size:11px; font-weight:bold; color:#555;">RIMANENZA CASSA COMUNE</span>
+                <div id="modal-cassa-rimanente" style="font-size:20px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
             </div>
         </div>
 
@@ -471,7 +484,7 @@
                 <div id="mini-car-box">
                     <model-viewer id="dashboard-viewer" auto-rotate bounds="tight" camera-orbit="45deg 75deg 105%" disable-zoom interaction-prompt="none" onclick="apriArchivio()"></model-viewer>
                 </div>
-                <h2 id="car-title-display" style="font-size:12px; text-align:center; margin-top:0; margin-bottom:6px;">Navigatore</h2>
+                <h2 id="car-title-display" style="font-size:14px; font-weight:800; text-align:center; margin-top:0; margin-bottom:8px;">Navigatore</h2>
                 
                 <label>Giorno di Viaggio</label>
                 <div id="day-selector-pills" class="horizontal-pills"></div>
@@ -498,8 +511,8 @@
 
             <div class="tile">
                 <label>Logistica e Pedaggi</label>
-                <div id="guide-content" style="font-size:11px; line-height: 1.2;">Seleziona un giorno.</div>
-                <div style="margin-top:2px;">
+                <div id="guide-content" style="font-size:13px; line-height: 1.3; font-weight: 500; color:#1C1C1E;">Seleziona un giorno.</div>
+                <div style="margin-top:4px;">
                     <a href="https://www.unipolmove.it/calcola-pedaggio/" target="_blank" class="toll-link">Tariffe Italia ↗</a>
                     <a href="https://www.vinci-autoroutes.com/fr/conseils/autoroute-mode-demploi/tarifs-peage-vinci-autoroutes/" target="_blank" class="toll-link">Tariffe Francia ↗</a>
                 </div>
@@ -514,15 +527,15 @@
                     </div>
                     <div class="flex-child" style="text-align: right;">
                         <label>Disponibilità</label>
-                        <div id="cassa-rimanente" style="font-size: 14px; font-weight: 800; color: #1B5E20; margin-top: 6px;">500.00 €</div>
+                        <div id="cassa-rimanente" style="font-size: 16px; font-weight: 800; color: #1B5E20; margin-top: 8px;">500.00 €</div>
                     </div>
                 </div>
             </div>
 
             <div class="tile" id="results-tile" style="display:none;">
-                <label style="color:var(--cp-blue); font-weight:800;">Stima Benzina Smart: <span id="hint-fuel">0.00</span>€</label>
+                <label style="color:var(--cp-blue); font-weight:800; font-size:12px;">Stima Benzina Smart: <span id="hint-fuel" style="font-size:14px;">0.00</span>€</label>
                 
-                <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px; margin-bottom:8px;">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px; margin-bottom:10px;">
                     <div class="flex-box">
                         <div class="input-group-box">
                             <label>⛽ Benzina (€)</label>
@@ -565,7 +578,7 @@
                 <button class="btn btn-success" onclick="salvaArchivio()">SALVA IN ARCHIVIO</button>
 
                 <div class="total-banner">
-                    <div id="km-display" style="font-size:10px; font-weight:800; margin-bottom:2px;">-- KM TOTALI</div>
+                    <div id="km-display" style="font-size:12px; font-weight:800; margin-bottom:2px; letter-spacing:0.5px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
                     <button class="btn btn-maps-premium" onclick="apriNavigatoreEsterno()">Avvia Navigazione 🧭</button>
                 </div>
@@ -760,7 +773,7 @@
     function apriNavigatoreEsterno() {
         const partenza = encodeURIComponent(document.getElementById("start").value);
         const arrivo = encodeURIComponent(document.getElementById("end").value);
-        const urlmappe = `https://maps.google.com/?saddr=${partenza}&daddr=${arrivo}&dirflg=d`;
+        const urlmappe = `http://maps.google.com/?saddr=${partenza}&daddr=${arrivo}&dirflg=d`;
         window.open(urlmappe, '_blank');
     }
 
