@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CarPlay Drive Expert PRO - Gestione Spese Avanzata</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -20,11 +20,39 @@
             margin: 0; 
             padding: 0; 
             width: 100vw; 
+            height: 100vh; 
             height: 100dvh; 
             overflow: hidden; 
             background: var(--cp-bg); 
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto; 
             -webkit-text-size-adjust: 100%;
+        }
+
+        /* Schermata di blocco rotazione per smartphone in verticale */
+        #rotate-warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #1C1C1E;
+            color: #FFFFFF;
+            z-index: 999999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #rotate-warning .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            animation: rotateAnim 2s infinite ease-in-out;
+        }
+
+        @keyframes rotateAnim {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(0deg); }
         }
         
         #landing-page { 
@@ -39,9 +67,9 @@
         }
 
         .asset-tile { 
-            width: 260px; 
-            height: 340px; 
-            border-radius: 45px; 
+            width: 240px; 
+            height: 300px; 
+            border-radius: 35px; 
             background: #fff; 
             cursor: pointer; 
             display: flex; 
@@ -49,7 +77,7 @@
             justify-content: space-between; 
             align-items: center; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
-            margin: 20px;
+            margin: 15px;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -59,7 +87,6 @@
             height: 80%;
         }
 
-        /* FIX SAFARI MOBILE LANDSCAPE: Mantiene la struttura a 3 colonne forzando lo scroll se lo schermo è piccolo */
         #main-app { 
             display: none; 
             grid-template-columns: 85px 1fr; 
@@ -75,60 +102,57 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 25px; 
-            padding-top: 30px; 
+            gap: 20px; 
+            padding-top: 20px; 
             height: 100%;
             box-sizing: border-box;
             z-index: 10;
         }
 
         .dock-icon { 
-            width: 60px; 
-            height: 60px; 
-            border-radius: 16px; 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 14px; 
             background: #fff; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            font-size: 26px; 
+            font-size: 24px; 
             cursor: pointer; 
         }
         
-        /* Contenitore interno con le colonne e la mappa affiancate esattamente come su desktop */
         #app-body-wrapper {
             display: grid;
-            grid-template-columns: 450px 1fr;
+            grid-template-columns: 400px 1fr;
             width: 100%;
             height: 100%;
-            overflow-x: auto; /* Permette lo scorrimento orizzontale fluido su Safari mobile */
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden;
         }
 
         #dashboard { 
-            padding: 20px; 
+            padding: 15px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 15px; 
-            width: 450px;
-            min-width: 450px;
+            gap: 12px; 
+            width: 400px;
+            min-width: 400px;
             box-sizing: border-box;
             height: 100%;
         }
 
         .tile { 
             background: #fff; 
-            border-radius: 24px; 
-            padding: 22px; 
+            border-radius: 18px; 
+            padding: 16px; 
             border: 1px solid #D1D1D6; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
         }
 
         #mini-car-box {
-            height: 120px;
+            height: 90px;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         #mini-car-box model-viewer {
@@ -141,8 +165,8 @@
             overflow-x: auto; 
             overflow-y: hidden; 
             width: 100%; 
-            padding: 10px 0; 
-            gap: 10px;
+            padding: 6px 0; 
+            gap: 8px;
             scroll-behavior: smooth;
             white-space: nowrap;
         }
@@ -151,10 +175,10 @@
 
         .pill { 
             flex: 0 0 auto;
-            padding: 12px 20px; 
+            padding: 8px 14px; 
             background: #E5E5EA; 
-            border-radius: 14px; 
-            font-size: 13px; 
+            border-radius: 10px; 
+            font-size: 12px; 
             font-weight: 600; 
             color: #48484A; 
             border: none; 
@@ -167,12 +191,12 @@
 
         input, select { 
             width: 100%; 
-            padding: 12px; 
-            border-radius: 12px; 
+            padding: 10px; 
+            border-radius: 10px; 
             border: 1px solid #D1D1D6; 
             background: #F2F2F7; 
-            margin-bottom: 8px; 
-            font-size: 14px; 
+            margin-bottom: 6px; 
+            font-size: 13px; 
             box-sizing: border-box;
         }
 
@@ -181,44 +205,43 @@
             text-transform: uppercase; 
             font-weight: 800; 
             color: #8E8E93; 
-            margin-bottom: 4px; 
+            margin-bottom: 3px; 
             display: block; 
         }
         
         .btn { 
             width: 100%; 
-            height: 56px; 
+            height: 46px; 
             border: none; 
-            border-radius: 18px; 
-            font-size: 16px; 
+            border-radius: 12px; 
+            font-size: 14px; 
             font-weight: 700; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            margin-bottom: 10px; 
+            margin-bottom: 6px; 
         }
 
         .btn-primary { background: var(--cp-blue); color: #fff; }
         .btn-success { background: var(--cp-green); color: white; }
         
-        /* Forza la mappa a mantenere una larghezza minima eccellente anche se visualizzata su schermi piccoli */
         #map { 
             width: 100%; 
-            min-width: 500px; 
             height: 100%; 
+            z-index: 1;
         }
 
         .total-banner { 
             background: #34C759; 
             color: #fff; 
-            border-radius: 20px; 
-            padding: 20px; 
+            border-radius: 14px; 
+            padding: 12px; 
             text-align: center; 
-            margin-top: 15px; 
+            margin-top: 10px; 
         }
 
-        #val-total { font-size: 34px; font-weight: 800; }
+        #val-total { font-size: 26px; font-weight: 800; }
         
         #archive-modal { 
             position: fixed; 
@@ -234,22 +257,22 @@
             width: 95vw; 
             max-width: 1000px;
             background: #fff; 
-            border-radius: 28px; 
-            padding: 30px; 
+            border-radius: 24px; 
+            padding: 20px; 
             max-height: 90vh; 
             overflow-y: auto; 
             box-sizing: border-box;
         }
 
-        .archive-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .archive-table th, .archive-table td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .archive-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .archive-table th, .archive-table td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 12px; }
 
         .delete-btn {
             background: #FF3B30;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -258,67 +281,93 @@
             color: var(--cp-blue); 
             font-weight: bold; 
             text-decoration: none; 
-            font-size: 12px; 
+            font-size: 11px; 
             border: 1px solid var(--cp-blue); 
-            padding: 6px 12px; 
-            border-radius: 8px; 
+            padding: 5px 10px; 
+            border-radius: 6px; 
             margin-right: 5px; 
             display: inline-block; 
             margin-top: 5px;
         }
 
-        .flex-box { display: flex; gap: 10px; }
+        .flex-box { display: flex; gap: 8px; }
         .flex-child { flex: 1; }
 
         .balance-box {
             background: #F2F2F7;
-            padding: 15px;
-            border-radius: 16px;
-            margin-top: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 8px;
             border-left: 5px solid var(--cp-orange);
         }
-        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 5px; }
-        .debt-line { font-size: 14px; margin: 4px 0; color: #3A3A3C; }
+        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 4px; font-size: 12px; }
+        .debt-line { font-size: 12px; margin: 3px 0; color: #3A3A3C; }
 
         .input-group-box {
             background: #F9F9FB;
-            padding: 10px;
-            border-radius: 14px;
+            padding: 8px;
+            border-radius: 10px;
             border: 1px solid #E5E5EA;
             flex: 1;
+        }
+
+        /* Quando lo smartphone viene girato in orizzontale o su schermi desktop compatti */
+        @media (max-width: 900px) and (orientation: landscape) {
+            #dock { gap: 10px; padding-top: 10px; width: 65px; }
+            #main-app { grid-template-columns: 65px 1fr; }
+            .dock-icon { width: 45px; height: 45px; font-size: 20px; border-radius: 10px; }
+            #app-body-wrapper { grid-template-columns: 320px 1fr; }
+            #dashboard { width: 320px; min-width: 320px; padding: 10px; gap: 10px; }
+            .tile { padding: 12px; border-radius: 12px; }
+            #mini-car-box { height: 65px; }
+            input, select { padding: 6px; font-size: 12px; margin-bottom: 4px; }
+            .btn { height: 36px; font-size: 12px; border-radius: 8px; }
+            .pill { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
+            #val-total { font-size: 22px; }
+        }
+
+        /* Intercettiamo i telefoni rimasti in VERTICALE */
+        @media (max-width: 480px) and (orientation: portrait) {
+            #rotate-warning { display: flex; }
         }
     </style>
 </head>
 <body>
 
+<div id="rotate-warning">
+    <div class="icon">🔄</div>
+    <h2 style="margin: 0 0 10px 0; font-size: 20px;">Gira il telefono</h2>
+    <p style="margin: 0; color: #8E8E93; font-size: 14px;">Questa app necessita dello schermo in orizzontale per essere usata.</p>
+</div>
+
 <div id="landing-page">
-    <h1 style="margin-bottom:40px;">Seleziona il tuo Veicolo</h1>
-    <div style="display:flex;">
+    <h1 style="margin-bottom:20px; font-size: 22px;">Seleziona il tuo Veicolo</h1>
+    <div style="display:flex; justify-content: center; width: 100%;">
         <div class="asset-tile" onclick="avviaApp('panda')">
-            <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight"></model-viewer>
-            <span style="font-weight:700;">Fiat Panda Hybrid</span>
+            <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight" interaction-prompt="none"></model-viewer>
+            <span style="font-weight:700; font-size: 14px;">Fiat Panda Hybrid</span>
         </div>
         <div class="asset-tile" onclick="avviaApp('corsa')">
-            <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate></model-viewer>
-            <span style="font-weight:700;">Opel Corsa 1.2</span>
+            <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate interaction-prompt="none"></model-viewer>
+            <span style="font-weight:700; font-size: 14px;">Opel Corsa 1.2</span>
         </div>
     </div>
 </div>
 
 <div id="archive-modal">
     <div id="archive-content">
-        <h2>Archivio Spese & Saldi Smart</h2>
+        <h2 style="font-size: 18px; margin-top: 0;">Archivio Spese & Saldi Smart</h2>
         
-        <div class="flex-box" style="margin-bottom: 20px;">
-            <div class="flex-child" style="background: #E5E5EA; padding: 15px; border-radius:14px;">
-                <span style="font-size:12px; font-weight:bold; color:#666;">RIMANENZA CASSA COMUNE</span>
-                <div id="modal-cassa-rimanente" style="font-size:24px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
+        <div class="flex-box" style="margin-bottom: 15px;">
+            <div class="flex-child" style="background: #E5E5EA; padding: 12px; border-radius:12px;">
+                <span style="font-size:11px; font-weight:bold; color:#666;">RIMANENZA CASSA COMUNE</span>
+                <div id="modal-cassa-rimanente" style="font-size:20px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
             </div>
         </div>
 
         <table class="archive-table">
             <thead>
-                <tr><th>Giorno</th><th>Tratta</th><th>Benzina</th><th>Pedaggi</th><th>Extra</th><th>Totale</th><th>Dettaglio Pagatori</th><th>Azioni</th></tr>
+                <tr><th>Giorno</th><th>Tratta</th><th>Benzina</th><th>Pedaggi</th><th>Extra</th><th>Totale</th><th>Pagatori</th><th>Azioni</th></tr>
             </thead>
             <tbody id="archive-list"></tbody>
         </table>
@@ -326,14 +375,14 @@
         <div class="flex-box">
             <div class="flex-child">
                 <div class="balance-box" style="border-left-color: var(--cp-orange);">
-                    <div class="balance-title">📊 PRIMO SALDO (Fino al 7 Ago - Diviso 3)</div>
-                    <div id="debito-periodo-1">Nessuna spesa registrata.</div>
+                    <div class="balance-title">📊 PRIMO SALDO (Fino al 7 Ago)</div>
+                    <div id="debito-periodo-1">Nessuna spesa.</div>
                 </div>
             </div>
             <div class="flex-child">
                 <div class="balance-box" style="border-left-color: var(--cp-blue);">
-                    <div class="balance-title">🏁 SECONDO SALDO (8-9 Ago - Diviso 2 Mario & Michael)</div>
-                    <div id="debito-periodo-2">Nessuna spesa registrata.</div>
+                    <div class="balance-title">🏁 SECONDO SALDO (8-9 Ago)</div>
+                    <div id="debito-periodo-2">Nessuna spesa.</div>
                 </div>
             </div>
         </div>
@@ -354,9 +403,9 @@
         <div id="dashboard">
             <div class="tile">
                 <div id="mini-car-box">
-                    <model-viewer id="dashboard-viewer" auto-rotate bounds="tight" camera-orbit="45deg 75deg 105%" disable-zoom onclick="apriArchivio()"></model-viewer>
+                    <model-viewer id="dashboard-viewer" auto-rotate bounds="tight" camera-orbit="45deg 75deg 105%" disable-zoom interaction-prompt="none" onclick="apriArchivio()"></model-viewer>
                 </div>
-                <h2 id="car-title-display" style="font-size:16px; text-align:center; margin-bottom:10px;">Navigatore</h2>
+                <h2 id="car-title-display" style="font-size:13px; text-align:center; margin-top:0; margin-bottom:8px;">Navigatore</h2>
                 
                 <label>Giorno di Viaggio</label>
                 <div id="day-selector-pills" class="horizontal-pills"></div>
@@ -383,8 +432,8 @@
 
             <div class="tile">
                 <label>Logistica e Pedaggi</label>
-                <div id="guide-content" style="font-size:13px;">Seleziona un giorno.</div>
-                <div style="margin-top:10px;">
+                <div id="guide-content" style="font-size:12px;">Seleziona un giorno.</div>
+                <div style="margin-top:4px;">
                     <a href="https://www.autostrade.it/it/pedaggio-autostradale" target="_blank" class="toll-link">Tariffe Italia ↗</a>
                     <a href="https://www.vinci-autoroutes.com/fr/autoroutes-temps-reel/" target="_blank" class="toll-link">Tariffe Francia ↗</a>
                 </div>
@@ -392,14 +441,14 @@
 
             <div class="tile" style="background: #F9F9FB;">
                 <label style="color: #2E7D32; font-weight: 800;">💰 Controllo Cassa Comune</label>
-                <div class="flex-box" style="margin-top: 5px;">
+                <div class="flex-box" style="margin-top: 4px;">
                     <div class="flex-child">
                         <label>Fondo Iniziale (€)</label>
                         <input type="number" id="cassa-iniziale" value="500" onchange="aggiornaCassaComune()">
                     </div>
                     <div class="flex-child" style="text-align: right;">
                         <label>Disponibilità</label>
-                        <div id="cassa-rimanente" style="font-size: 20px; font-weight: 800; color: #1B5E20; margin-top: 10px;">500.00 €</div>
+                        <div id="cassa-rimanente" style="font-size: 16px; font-weight: 800; color: #1B5E20; margin-top: 8px;">500.00 €</div>
                     </div>
                 </div>
             </div>
@@ -407,14 +456,14 @@
             <div class="tile" id="results-tile" style="display:none;">
                 <label style="color:var(--cp-blue); font-weight:800;">Stima Benzina Smart: <span id="hint-fuel">0.00</span>€</label>
                 
-                <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px; margin-bottom:15px;">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px; margin-bottom:10px;">
                     <div class="flex-box">
                         <div class="input-group-box">
                             <label>⛽ Benzina Reale (€)</label>
                             <input type="number" id="actual-fuel" value="0" oninput="aggiornaTotale()">
                             <label>Chi Paga?</label>
                             <select id="payer-fuel">
-                                <option value="cassa">💳 Cassa Comune</option>
+                                <option value="cassa">💳 Cassa</option>
                                 <option value="mario">👨‍✈️ Mario</option>
                                 <option value="samuele">👦 Samuele</option>
                                 <option value="michael">👱 Michael</option>
@@ -426,7 +475,7 @@
                             <input type="number" id="actual-toll" value="0" oninput="aggiornaTotale()">
                             <label>Chi Paga?</label>
                             <select id="payer-toll">
-                                <option value="cassa">💳 Cassa Comune</option>
+                                <option value="cassa">💳 Cassa</option>
                                 <option value="mario">👨‍✈️ Mario</option>
                                 <option value="samuele">👦 Samuele</option>
                                 <option value="michael">👱 Michael</option>
@@ -439,7 +488,7 @@
                         <input type="number" id="actual-extra" value="0" oninput="aggiornaTotale()">
                         <label>Chi Paga?</label>
                         <select id="payer-extra">
-                            <option value="cassa">💳 Cassa Comune</option>
+                            <option value="cassa">💳 Cassa</option>
                             <option value="mario">👨‍✈️ Mario</option>
                             <option value="samuele">👦 Samuele</option>
                             <option value="michael">👱 Michael</option>
@@ -450,7 +499,7 @@
                 <button class="btn btn-success" onclick="salvaArchivio()">SALVA IN ARCHIVIO</button>
 
                 <div class="total-banner">
-                    <div id="km-display" style="font-size:13px; font-weight:800; margin-bottom:5px;">-- KM TOTALI</div>
+                    <div id="km-display" style="font-size:11px; font-weight:800; margin-bottom:2px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
                 </div>
             </div>
@@ -559,6 +608,9 @@
         abilitaTrascina('.horizontal-pills');
         
         attivaSincronizzazioneFirebase();
+        
+        window.addEventListener('resize', () => { if(map) map.invalidateSize(); });
+        setTimeout(() => { map.invalidateSize(); }, 400);
     }
 
     function inviaNotifica(titolo, testo) {
@@ -668,7 +720,7 @@
             if (routeLayer) map.removeLayer(routeLayer);
             routeLayer = L.geoJSON(route.geometry, { style: { color: "#007AFF", weight: 6 } }).addTo(map);
             routeLayer.bindPopup(`<b>Percorso: ${currentKm} KM</b>`).openPopup();
-            map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+            map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
             
             aggiornaTotale();
         } catch (e) { alert("Errore mappe. Riprova."); }
@@ -714,7 +766,7 @@
         try {
             const { collection, addDoc } = window.firestoreLib;
             await addDoc(collection(window.db, "tripArch_v11"), nuovaSpesa);
-            alert("Spesa salvata sul cloud con successo! 🎉");
+            alert("Spesa salvata con successo! 🎉");
             
             document.getElementById("actual-fuel").value = 0;
             document.getElementById("actual-toll").value = 0;
@@ -723,7 +775,7 @@
         } catch (errore) {
             console.error(errore);
             myLastActionId = null;
-            alert("Errore durante il salvataggio online. Riprova!");
+            alert("Errore nel salvataggio. Riprova!");
         }
     }
 
@@ -731,16 +783,16 @@
         let elemento = databaseArray.find(item => item.firebaseId === firebaseId);
         if(!elemento) return;
 
-        if(confirm("Vuoi davvero cancellare questa spesa dall'archivio online?")) {
+        if(confirm("Vuoi davvero cancellare questa spesa?")) {
             myLastActionId = elemento.id;
             try {
                 const { doc, deleteDoc } = window.firestoreLib;
                 await deleteDoc(doc(window.db, "tripArch_v11", firebaseId));
-                alert("Spesa rimossa con successo!");
+                alert("Spesa rimossa!");
             } catch (errore) {
                 console.error(errore);
                 myLastActionId = null;
-                alert("Impossibile eliminare la voce.");
+                alert("Errore nell'eliminazione.");
             }
         }
     }
@@ -773,9 +825,9 @@
 
     function renderizzaTabellaArchivio() {
         document.getElementById("archive-list").innerHTML = databaseArray.map(i => {
-            let detf = i.benzina > 0 ? `Benzina: ${formattaPagatore(i.benzina, i.payerFuel)}` : '';
-            let dett = i.pedaggi > 0 ? `Pedaggi: ${formattaPagatore(i.pedaggi, i.payerToll)}` : '';
-            let dete = i.extra > 0 ? `Extra: ${formattaPagatore(i.extra, i.payerExtra)}` : '';
+            let detf = i.benzina > 0 ? `B:${formattaPagatore(i.benzina, i.payerFuel)}` : '';
+            let dett = i.pedaggi > 0 ? `P:${formattaPagatore(i.pedaggi, i.payerToll)}` : '';
+            let dete = i.extra > 0 ? `E:${formattaPagatore(i.extra, i.payerExtra)}` : '';
             let stringaDettaglio = [detf, dett, dete].filter(Boolean).join(" | ");
 
             return `<tr>
