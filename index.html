@@ -33,6 +33,20 @@
             -webkit-text-size-adjust: 100%;
         }
 
+        /* Gestione dell'area sicura dell'iPhone per evitare il NOTCH */
+        #main-app { 
+            display: none; 
+            width: 100vw; 
+            height: 100vh;
+            height: 100dvh;
+            box-sizing: border-box;
+            /* Rileva automaticamente la presenza del notch a destra o a sinistra */
+            padding-left: env(safe-area-inset-left, 0px);
+            padding-right: env(safe-area-inset-right, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: #E5E5EA; /* Colore di sfondo della dock per continuità sotto il notch */
+        }
+
         /* Istruzioni per installazione iniziale in Safari */
         #pwa-instructions {
             position: fixed;
@@ -49,12 +63,11 @@
             box-sizing: border-box;
         }
 
-        /* Nasconde la schermata di installazione se l'app è già aperta a schermo intero standalone */
         @media (display-mode: standalone) or (-webkit-display-mode: standalone) {
             #pwa-instructions { display: none !important; }
         }
 
-        /* Schermata di blocco rotazione per smartphone in verticale */
+        /* Schermata di blocco rotazione */
         #rotate-warning {
             display: none;
             position: fixed;
@@ -122,14 +135,7 @@
             height: 75%;
         }
 
-        #main-app { 
-            display: none; 
-            width: 100vw; 
-            height: 100vh;
-            height: 100dvh;
-            box-sizing: border-box;
-        }
-
+        /* DOCK LATERALE CORRETTA: Centrata e fluida */
         #dock { 
             width: 70px;
             background: #E5E5EA; 
@@ -137,8 +143,8 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 15px; 
-            padding-top: 15px; 
+            justify-content: center; /* Centra perfettamente i tasti in verticale */
+            gap: 20px; 
             height: 100%;
             box-sizing: border-box;
             z-index: 10;
@@ -155,18 +161,24 @@
             font-size: 20px; 
             cursor: pointer; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.1s ease;
+        }
+
+        .dock-icon:active {
+            transform: scale(0.92);
         }
         
         #app-body-wrapper {
             display: flex;
-            width: calc(100vw - 70px);
+            flex: 1;
             height: 100%;
             overflow: hidden;
+            background: var(--cp-bg);
         }
 
         #dashboard { 
             width: 35%;
-            min-width: 290px;
+            min-width: 295px;
             max-width: 380px;
             padding: 10px; 
             overflow-y: auto; 
@@ -214,7 +226,7 @@
 
         .pill { 
             flex: 0 0 auto;
-            padding: 6px 10px; 
+            padding: 6px 12px; 
             background: #E5E5EA; 
             border-radius: 8px; 
             font-size: 11px; 
@@ -264,6 +276,15 @@
 
         .btn-primary { background: var(--cp-blue); color: #fff; }
         .btn-success { background: var(--cp-green); color: white; }
+        .btn-outline-navigation { 
+            background: #FFFFFF; 
+            color: var(--cp-blue); 
+            border: 2px solid var(--cp-blue); 
+            margin-top: 6px;
+        }
+        .btn-outline-navigation:active {
+            background: #EEF6FF;
+        }
         
         #map { 
             flex: 1;
@@ -290,11 +311,13 @@
             display: none; 
             justify-content: center; 
             align-items: center; 
+            padding-left: env(safe-area-inset-left, 10px);
+            padding-right: env(safe-area-inset-right, 10px);
         }
 
         #archive-content { 
-            width: 95vw; 
-            max-width: 900px;
+            width: 100%; 
+            max-width: 850px;
             background: #fff; 
             border-radius: 20px; 
             padding: 15px; 
@@ -350,7 +373,7 @@
             flex: 1;
         }
 
-        /* Intercettiamo i telefoni rimasti in VERTICALE */
+        /* Disabilita l'app se lasciata in verticale */
         @media (orientation: portrait) {
             #rotate-warning { display: flex; }
             #main-app { display: none !important; }
@@ -363,10 +386,10 @@
     <div style="font-size: 50px; margin-bottom: 15px;">📲</div>
     <h2 style="margin: 0 0 10px 0; font-size: 20px;">Installa l'App CarPlay</h2>
     <p style="margin: 0 0 25px 0; color: #AEAEB2; font-size: 14px; line-height: 1.4;">
-        Per eliminare le barre di Safari e usarla a schermo intero reale:<br><br>
+        Per bloccare lo schermo intero ed eliminare del tutto le barre:<br><br>
         1. Premi il tasto <b>Condividi</b> in basso (quadrato con freccia in alto <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'/><polyline points='16 6 12 2 8 6'/><line x1='12' y1='2' x2='12' y2='15'/></svg>" style="vertical-align:middle;">)<br>
-        2. Scorri e seleziona <b>"Aggiungi alla schermata Home"</b><br>
-        3. Apri l'app dall'icona creata sul telefono.
+        2. Clicca su <b>"Aggiungi alla schermata Home"</b><br>
+        3. Avvia l'app direttamente dall'icona creata sulla Home!
     </p>
     <button class="btn btn-primary" style="width: auto; padding: 0 30px;" onclick="document.getElementById('pwa-instructions').style.display='none'">Usa nel browser (Con barre)</button>
 </div>
@@ -538,6 +561,7 @@
                 <div class="total-banner">
                     <div id="km-display" style="font-size:10px; font-weight:800; margin-bottom:2px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
+                    <button class="btn btn-outline-navigation" onclick="apriNavigatoreEsterno()">APRI IN MAPPE ↗</button>
                 </div>
             </div>
         </div>
@@ -725,6 +749,15 @@
             
             aggiornaTotale();
         } catch (e) { alert("Errore mappe. Riprova."); }
+    }
+
+    function apriNavigatoreEsterno() {
+        const partenza = encodeURIComponent(document.getElementById("start").value);
+        const arrivo = encodeURIComponent(document.getElementById("end").value);
+        
+        // Stringa URL universale che apre Apple Maps su iOS o Google Maps ovunque
+        const urlmappe = `https://maps.google.com/?saddr=${partenza}&daddr=${arrivo}&dirflg=d`;
+        window.open(urlmappe, '_blank');
     }
 
     function aggiornaTotale() {
