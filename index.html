@@ -239,7 +239,6 @@
         }
 
         .flex-box { display: flex; gap: 10px; }
-        .flex-box { display: flex; gap: 10px; }
         .flex-child { flex: 1; }
 
         .balance-box {
@@ -267,11 +266,11 @@
     <h1 style="margin-bottom:40px;">Seleziona il tuo Veicolo</h1>
     <div style="display:flex;">
         <div class="asset-tile" onclick="avviaApp('panda')">
-            <model-viewer src="https://dl.dropboxusercontent.com/scl/fi/c1np89582ql8b0q777amh/fiat_panda.glb?rlkey=3fozrzak2ji1ebychjjhe4267&st=w1c04bz2&raw=1" auto-rotate bounds="tight"></model-viewer>
+            <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight"></model-viewer>
             <span style="font-weight:700;">Fiat Panda Hybrid</span>
         </div>
         <div class="asset-tile" onclick="avviaApp('corsa')">
-            <model-viewer src="https://dl.dropboxusercontent.com/scl/fi/4ok8w2zlrtktcp8a54bu2/opel_corsa_b_3door_1998.glb?rlkey=t5dtnfamyi4lplxugtyrzel96&st=1mzinwpm&raw=1" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate></model-viewer>
+            <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate></model-viewer>
             <span style="font-weight:700;">Opel Corsa 1.2</span>
         </div>
     </div>
@@ -453,8 +452,9 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     const carConfig = {
-        panda: { name: "Fiat Panda Hybrid 2024", consumption: 18.0, file: "https://dl.dropboxusercontent.com/scl/fi/c1np89582ql8b0q777amh/fiat_panda.glb?rlkey=3fozrzak2ji1ebychjjhe4267&st=w1c04bz2&raw=1", center: "auto" },
-        corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "https://dl.dropboxusercontent.com/scl/fi/4ok8w2zlrtktcp8a54bu2/opel_corsa_b_3door_1998.glb?rlkey=t5dtnfamyi4lplxugtyrzel96&st=1mzinwpm&raw=1", center: "0m 0m 0m" }
+        // Aggiornati percorsi dei file interni a carConfig per GitHub
+        panda: { name: "Fiat Panda Hybrid 2024", consumption: 18.0, file: "fiat_panda-v1.glb", center: "auto" },
+        corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
     };
 
     const itinerary = {
