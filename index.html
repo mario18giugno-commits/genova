@@ -591,7 +591,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyA-3oHPE-xos-IDjCKn8RobNf5HRRmmmJE",
@@ -603,10 +603,9 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app, "(default)");
-
+    const db = getFirestore(app);
     window.db = db;
-    window.firestoreLib = { collection, addDoc, onSnapshot, setDoc, doc, getDoc };
+    console.log("Database pronto!");
 </script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
