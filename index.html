@@ -628,7 +628,7 @@ const itinerary = {
         "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
     };
 
-// Database Hotel definitivo
+// Database Hotel
 const hotelDatabase = {
     "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
     "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
@@ -640,20 +640,15 @@ const hotelDatabase = {
     "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
 };
 
-// Funzione per navigare all'hotel
+// Funzione di navigazione Hotel
 function vaiInHotel() {
-    const hotelIndirizzo = hotelDatabase[currentDay];
-    
-    if (!hotelIndirizzo) {
+    const indirizzo = hotelDatabase[currentDay];
+    if (!indirizzo) {
         alert("Nessun hotel registrato per questo giorno.");
         return;
     }
-
-    // Usiamo il formato diretto di Google Maps che "prende" la posizione attuale
-    // automaticamente senza dover chiedere i permessi del browser
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(hotelIndirizzo)}&travelmode=driving`;
-    
-    // Questo è lo stesso metodo che usa il tasto che ti funziona bene
+    // URL universale per Google Maps che accetta la destinazione
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(indirizzo)}&travelmode=driving`;
     window.open(url, '_blank');
 }
 
