@@ -397,6 +397,22 @@
             #rotate-warning { display: flex; }
             #main-app { display: none !important; }
         }
+.btn-hotel {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 2px solid #27ae60;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+.btn-hotel:hover {
+    background-color: #27ae60;
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -581,6 +597,9 @@
                     <div id="km-display" style="font-size:12px; font-weight:800; margin-bottom:2px; letter-spacing:0.5px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
                     <button class="btn btn-maps-premium" onclick="apriNavigatoreEsterno()">Avvia Navigazione 🧭</button>
+<button class="btn-hotel" onclick="vaiInHotel()">
+    📍 Naviga verso l'Hotel 🏨
+</button>
                 </div>
             </div>
         </div>
@@ -608,6 +627,41 @@ const itinerary = {
         "9": { points: ["Barcellona", "Sanremo"], label: "9 Ago" },
         "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
     };
+
+// Database Hotel definitivo
+const hotelDatabase = {
+    "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
+    "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
+    "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "6": "B&B Marseille Prado, 6 Allée Marcel Leclerc, 13008 Marsiglia, Francia",
+    "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
+};
+
+// Funzione per navigare all'hotel
+function vaiInHotel() {
+    const hotelIndirizzo = hotelDatabase[currentDay];
+    if (!hotelIndirizzo) { alert("Nessun hotel registrato."); return; }
+
+    // Opzioni per massima precisione GPS
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        // Uso Google Maps per navigazione turn-by-turn
+        const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(hotelIndirizzo)}&travelmode=driving`;
+        window.open(url, '_blank');
+    }, (error) => {
+        alert("Errore GPS: Assicurati di aver dato il consenso alla posizione.");
+    }, options);
+}
 
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
     let databaseArray = []; 
