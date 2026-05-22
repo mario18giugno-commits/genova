@@ -958,8 +958,32 @@ function vaiInHotel() {
   // 4. Esportazione per far funzionare le tue funzioni (salvataggio/cancellazione)
   window.db = db;
   window.firestoreLib = { collection, onSnapshot, addDoc, doc, deleteDoc };
-
   console.log("Firebase e Firestore inizializzati correttamente!");
+</script>
+<script>
+    window.addEventListener('load', () => {
+        // Questa funzione cerca la variabile 'map' che deve esistere nel tuo codice
+        function caricaZone() {
+            // Controlla se la variabile 'map' esiste (Leaflet deve averla creata)
+            if (typeof map !== 'undefined') {
+                console.log("Mappa trovata, carico le zone...");
+                
+                // Carica Barcellona
+                fetch('zbe_barcellona.geojson')
+                    .then(res => res.json())
+                    .then(data => L.geoJSON(data, { style: { color: 'red', weight: 3, fillColor: 'red', fillOpacity: 0.3 } }).addTo(map));
+
+                // Carica Marsiglia
+                fetch('zfe_marsiglia.geojson')
+                    .then(res => res.json())
+                    .then(data => L.geoJSON(data, { style: { color: 'blue', weight: 3, fillColor: 'blue', fillOpacity: 0.3 } }).addTo(map));
+            } else {
+                console.warn("Variabile 'map' non trovata! Riprovo tra 1 secondo...");
+                setTimeout(caricaZone, 1000); // Se non la trova, riprova
+            }
+        }
+        caricaZone();
+    });
 </script>
 </body>
 </html>
