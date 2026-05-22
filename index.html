@@ -791,8 +791,8 @@ function vaiInHotel() {
         return; 
     }
     
-    // URL corretto e funzionante per Google Maps
-    const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(indirizzo);
+    // URL corretto per Google Maps (direzioni)
+    const url = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(indirizzo);
     window.open(url, '_blank');
 }
     async function salvaArchivio() {
