@@ -397,22 +397,6 @@
             #rotate-warning { display: flex; }
             #main-app { display: none !important; }
         }
-.btn-hotel {
-    background-color: #ffffff;
-    color: #2c3e50;
-    border: 2px solid #27ae60;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    transition: 0.3s;
-}
-.btn-hotel:hover {
-    background-color: #27ae60;
-    color: white;
-}
     </style>
 </head>
 <body>
@@ -597,8 +581,8 @@
                     <div id="km-display" style="font-size:12px; font-weight:800; margin-bottom:2px; letter-spacing:0.5px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
                     <button class="btn btn-maps-premium" onclick="apriNavigatoreEsterno()">Avvia Navigazione 🧭</button>
-<button class="btn-hotel" onclick="vaiInHotel()">
-    📍 Naviga verso l'Hotel 🏨
+<button class="btn btn-maps-premium" style="background: #27ae60; margin-top: 10px;" onclick="vaiInHotel()">
+    📍 Vai in Hotel 🏨
 </button>
                 </div>
             </div>
@@ -616,7 +600,7 @@
         corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
     };
 
-const itinerary = {
+ const itinerary = {
         "2": { points: ["Genova", "Portofino"], label: "2 Ago" },
         "3": { points: ["Portofino", "Cannes"], label: "3 Ago" },
         "4": { points: ["Cannes", "Saint-Tropez", "Aix-en-Provence"], label: "4 Ago" },
@@ -628,7 +612,9 @@ const itinerary = {
         "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
     };
 
-// Database Hotel
+    let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
+    let databaseArray = []; 
+
 const hotelDatabase = {
     "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
     "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
@@ -639,33 +625,6 @@ const hotelDatabase = {
     "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
     "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
 };
-
-// Funzione di navigazione Hotel
-function vaiInHotel() {
-    const indirizzo = hotelDatabase[currentDay];
-    if (!indirizzo) {
-        alert("Nessun hotel registrato per questo giorno.");
-        return;
-    }
-    // URL universale per Google Maps che accetta la destinazione
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(indirizzo)}&travelmode=driving`;
-    window.open(url, '_blank');
-}
-
-    navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        // Uso Google Maps per navigazione turn-by-turn
-        const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(hotelIndirizzo)}&travelmode=driving`;
-        window.open(url, '_blank');
-    }, (error) => {
-        alert("Errore GPS: Assicurati di aver dato il consenso alla posizione.");
-    }, options);
-}
-
-    let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
-    let databaseArray = []; 
-
     function abilitaTrascina(selettore) {
         const containers = document.querySelectorAll(selettore);
         containers.forEach(slider => {
@@ -681,6 +640,17 @@ function vaiInHotel() {
                 const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
             });
         });
+
+const hotelDatabase = {
+    "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
+    "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
+    "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "6": "B&B Marseille Prado, 6 Allée Marcel Leclerc, 13008 Marsiglia, Francia",
+    "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
+};
     }
 
     function avviaApp(id) {
@@ -814,13 +784,17 @@ function vaiInHotel() {
         window.open(urlmappe, '_blank');
     }
 
-    function aggiornaTotale() {
-        const b = parseFloat(document.getElementById("actual-fuel").value) || 0;
-        const t = parseFloat(document.getElementById("actual-toll").value) || 0;
-        const e = parseFloat(document.getElementById("actual-extra").value) || 0;
-        document.getElementById("val-total").innerText = (b + t + e).toFixed(2) + " €";
+function vaiInHotel() {
+    const indirizzo = hotelDatabase[currentDay];
+    if (!indirizzo) { 
+        alert("Nessun hotel registrato per questo giorno: " + currentDay); 
+        return; 
     }
-
+    
+    // URL corretto e funzionante per Google Maps
+    const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(indirizzo);
+    window.open(url, '_blank');
+}
     async function salvaArchivio() {
         const b = parseFloat(document.getElementById("actual-fuel").value) || 0;
         const t = parseFloat(document.getElementById("actual-toll").value) || 0;
