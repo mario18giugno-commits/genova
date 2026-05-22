@@ -597,14 +597,16 @@
         corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
     };
 
-   const itinerary = {
-        "3": { points: ["Genova", "Portofino", "Cannes"], label: "3 Ago: Genova → Cannes", info: "Confine Ventimiglia." },
-        "4": { points: ["Cannes", "Saint-Tropez", "Aigues-Mortes"], label: "4 Ago: Cannes → Aigues-Mortes", info: "Costa Azzurra." },
-        "5": { points: ["Aigues-Mortes", "Collioure"], label: "5 Ago: Aigues-Mortes → Collioure", info: "Costa Vermeille." },
-        "6": { points: ["Collioure", "Girona"], label: "6 Ago: Collioure → Girona", info: "Ingresso Spagna." },
-        "7": { points: ["Girona", "Barcellona"], label: "7 Ago: Girona → Barcellona", info: "Arrivo a Barcellona. Ultimo giorno di Samuele!" },
-        "8": { points: ["Barcellona", "Aix-en-Provence"], label: "8 Ago: Barcellona → Aix-en-Provence", info: "Rientro verso Est. Solo Mario e Michael." },
-        "9": { points: ["Aix-en-Provence", "Genova"], label: "9 Ago: Aix-en-Provence → Genova", info: "Tappa finale. Solo Mario e Michael." }
+const itinerary = {
+        "2": { points: ["Genova", "Portofino"], label: "2 Ago" },
+        "3": { points: ["Portofino", "Cannes"], label: "3 Ago" },
+        "4": { points: ["Cannes", "Saint-Tropez", "Aix-en-Provence"], label: "4 Ago" },
+        "5": { points: ["Aix-en-Provence", "Gole del Verdon", "Lago di Sainte-Croix", "Aix-en-Provence"], label: "5 Ago" },
+        "6": { points: ["Aix-en-Provence", "Cassis", "Le Calanques", "Marsiglia"], label: "6 Ago" },
+        "7": { points: ["Marsiglia", "Barcellona"], label: "7 Ago" },
+        "8": { points: ["Barcellona"], label: "8 Ago" },
+        "9": { points: ["Barcellona", "Sanremo"], label: "9 Ago" },
+        "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
     };
 
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
