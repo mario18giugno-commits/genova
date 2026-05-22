@@ -643,14 +643,19 @@ const hotelDatabase = {
 // Funzione per navigare all'hotel
 function vaiInHotel() {
     const hotelIndirizzo = hotelDatabase[currentDay];
-    if (!hotelIndirizzo) { alert("Nessun hotel registrato."); return; }
+    
+    if (!hotelIndirizzo) {
+        alert("Nessun hotel registrato per questo giorno.");
+        return;
+    }
 
-    // Opzioni per massima precisione GPS
-    const options = {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-    };
+    // Usiamo il formato diretto di Google Maps che "prende" la posizione attuale
+    // automaticamente senza dover chiedere i permessi del browser
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(hotelIndirizzo)}&travelmode=driving`;
+    
+    // Questo è lo stesso metodo che usa il tasto che ti funziona bene
+    window.open(url, '_blank');
+}
 
     navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude;
