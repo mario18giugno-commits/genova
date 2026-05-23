@@ -1022,6 +1022,28 @@ function vaiInHotel() {
         aggiungiCasette();
     });
 </script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // 1. Inizializzazione Mappa Principale (Dashboard)
+    // Sostituiamo la logica spezzettata con un unico blocco ordinato
+    window.addEventListener('load', () => {
+        // Mappa principale
+        window.map = L.map('map', { zoomControl: false }).setView([43.5, 5.0], 7);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        // Aggiunta icone hotel
+        const iconaHotel = L.divIcon({ html: `<div style="font-size: 24px;">🏨</div>`, className: 'marker-hotel' });
+        [
+            { nome: "Il Gattonero", lat: 44.4446, lon: 9.2558 },
+            { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
+            { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
+            { nome: "B&B Marseille Prado", lat: 43.2764, lon: 5.3912 },
+            { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
+            { nome: "Hotel Ariston Sanremo", lat: 43.8152, lon: 7.7770 }
+        ].forEach(h => L.marker([h.lat, h.lon], { icon: iconaHotel }).addTo(map).bindPopup(h.nome));
+    });
+</script>
+
 <div id="roadbook-modal" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85);">
     <div style="background:#fff; height:100vh; position:relative; display:flex;">
         <button onclick="document.getElementById('roadbook-modal').style.display='none'" style="position:absolute; top:10px; right:10px; z-index:9999; font-size:20px; cursor:pointer;">❌</button>
@@ -1039,32 +1061,22 @@ function vaiInHotel() {
         if (typeof rbMap === 'undefined') {
             window.rbMap = L.map('map-rb').setView([43.5, 5.0], 6);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png').addTo(rbMap);
-            window.rbLayer = L.layerGroup().addTo(rbMap);
-            renderizzaRoadbook();
+            popolaListaRB();
         }
-        setTimeout(() => rbMap.invalidateSize(), 200);
+        setTimeout(() => rbMap.invalidateSize(), 500);
     }
 
-    function renderizzaRoadbook() {
+    function popolaListaRB() {
         const list = document.getElementById('list-rb');
-        list.innerHTML = "";
         Object.keys(itinerary).forEach(dayKey => {
-            const d = itinerary[dayKey];
             const div = document.createElement('div');
             div.style.padding = "10px"; div.style.borderBottom = "1px solid #ddd"; div.style.cursor = "pointer";
-            div.innerHTML = `<strong>Giorno ${dayKey}</strong><br>${d.points.join(' ➔ ')}`;
-            div.onclick = () => {
-                window.rbLayer.clearLayers();
-                // Esempio: aggiungi marker per i punti del giorno
-                d.points.forEach(p => {
-                    // Nota: Qui dovresti avere le coordinate per ogni punto, 
-                    // se non le hai, il marker non apparirà.
-                    console.log("Visualizzo: " + p);
-                });
-            };
+            div.innerHTML = `<strong>Giorno ${dayKey}</strong><br>${itinerary[dayKey].points.join(' ➔ ')}`;
+            div.onclick = () => alert("Giorno " + dayKey + " selezionato");
             list.appendChild(div);
         });
     }
 </script>
+
 </body>
 </html>
