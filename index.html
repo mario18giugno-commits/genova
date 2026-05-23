@@ -1022,61 +1022,1032 @@ function vaiInHotel() {
         aggiungiCasette();
     });
 </script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    // 1. Inizializzazione Mappa Principale (Dashboard)
-    // Sostituiamo la logica spezzettata con un unico blocco ordinato
-    window.addEventListener('load', () => {
-        // Mappa principale
-        window.map = L.map('map', { zoomControl: false }).setView([43.5, 5.0], 7);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-        // Aggiunta icone hotel
-        const iconaHotel = L.divIcon({ html: `<div style="font-size: 24px;">🏨</div>`, className: 'marker-hotel' });
-        [
-            { nome: "Il Gattonero", lat: 44.4446, lon: 9.2558 },
-            { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
-            { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
-            { nome: "B&B Marseille Prado", lat: 43.2764, lon: 5.3912 },
-            { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
-            { nome: "Hotel Ariston Sanremo", lat: 43.8152, lon: 7.7770 }
-        ].forEach(h => L.marker([h.lat, h.lon], { icon: iconaHotel }).addTo(map).bindPopup(h.nome));
-    });
-</script>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Drive Expert">
+    <meta name="mobile-web-app-capable" content="yes">
 
-<div id="roadbook-modal" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85);">
-    <div style="background:#fff; height:100vh; position:relative; display:flex;">
-        <button onclick="document.getElementById('roadbook-modal').style.display='none'" style="position:absolute; top:10px; right:10px; z-index:9999; font-size:20px; cursor:pointer;">❌</button>
-        <div id="sidebar-rb" style="width:400px; overflow-y:auto; padding:20px;">
-            <h2>Roadbook</h2>
-            <div id="list-rb"></div>
+    <title>CarPlay Drive Expert PRO</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <style>
+        :root {
+            --cp-bg: #F2F2F7;
+            --cp-card: #FFFFFF;
+            --cp-blue: #007AFF;
+            --cp-green: #34C759;
+            --cp-orange: #FF9500;
+            --cp-dark: #1C1C1E;
+        }
+
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100vw; 
+            height: 100vh;
+            height: 100dvh; 
+            overflow: hidden; 
+            background: var(--cp-bg); 
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto; 
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* Gestione dell'area sicura dell'iPhone per evitare il NOTCH */
+        #main-app { 
+            display: none; 
+            width: 100vw; 
+            height: 100vh;
+            height: 100dvh;
+            box-sizing: border-box;
+            padding-left: env(safe-area-inset-left, 0px);
+            padding-right: env(safe-area-inset-right, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: #E5E5EA; 
+        }
+
+        /* Istruzioni per installazione iniziale in Safari */
+        #pwa-instructions {
+            position: fixed;
+            inset: 0;
+            background: #1C1C1E;
+            color: white;
+            z-index: 9999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        @media (display-mode: standalone) or (-webkit-display-mode: standalone) {
+            #pwa-instructions { display: none !important; }
+        }
+
+        /* Schermata di blocco rotazione */
+        #rotate-warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #1C1C1E;
+            color: #FFFFFF;
+            z-index: 999999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #rotate-warning .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            animation: rotateAnim 2s infinite ease-in-out;
+        }
+
+        @keyframes rotateAnim {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        #landing-page { 
+            position: fixed; 
+            inset: 0; 
+            z-index: 10000; 
+            background: var(--cp-bg); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .asset-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .asset-tile { 
+            flex: 1;
+            height: 180px; 
+            border-radius: 20px; 
+            background: #fff; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .asset-tile model-viewer {
+            width: 100%;
+            height: 75%;
+        }
+
+        /* DOCK LATERALE CORRETTA */
+        #dock { 
+            width: 75px;
+            background: #E5E5EA; 
+            border-right: 1px solid #C6C6C8; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 22px; 
+            height: 100%;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .dock-icon { 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 14px; 
+            background: #fff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 24px; 
+            cursor: pointer; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            transition: transform 0.1s ease;
+        }
+
+        .dock-icon:active {
+            transform: scale(0.92);
+        }
+        
+        #app-body-wrapper {
+            display: flex;
+            flex: 1;
+            height: 100%;
+            overflow: hidden;
+            background: var(--cp-bg);
+        }
+
+        /* DASHBOARD ALLARGATA E AGGIORNATA */
+        #dashboard { 
+            width: 38%;
+            min-width: 320px;
+            max-width: 420px;
+            padding: 12px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            box-sizing: border-box;
+            height: 100%;
+            background: var(--cp-bg);
+            border-right: 1px solid #D1D1D6;
+        }
+
+        .tile { 
+            background: #fff; 
+            border-radius: 16px; 
+            padding: 14px; 
+            border: 1px solid #D1D1D6; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
+        }
+
+        #mini-car-box {
+            height: 70px;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        #mini-car-box model-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .horizontal-pills { 
+            display: flex; 
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            width: 100%; 
+            padding: 6px 0; 
+            gap: 8px;
+            scroll-behavior: smooth;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .horizontal-pills::-webkit-scrollbar { display: none; }
+
+        /* PILLOLE PIÙ GRANDI ED ACCESSIBILI */
+        .pill { 
+            flex: 0 0 auto;
+            padding: 8px 14px; 
+            background: #E5E5EA; 
+            border-radius: 10px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #3A3A3C; 
+            border: none; 
+        }
+
+        .pill.active { 
+            background: var(--cp-blue); 
+            color: white; 
+        }
+
+        /* INPUT E SELECT PIÙ ALTI E CON TESTO GRANDE */
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            border-radius: 10px; 
+            border: 1px solid #C6C6C8; 
+            background: #F2F2F7; 
+            margin-bottom: 6px; 
+            font-size: 14px; 
+            font-weight: 600;
+            box-sizing: border-box;
+            color: #1C1C1E;
+        }
+
+        /* ETICHETTE DISCRETI MA COSPICUE */
+        label { 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            color: #636366; 
+            margin-bottom: 4px; 
+            display: block; 
+            letter-spacing: 0.3px;
+        }
+        
+        /* BOTTONI GRANDI */
+        .btn { 
+            width: 100%; 
+            height: 44px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 6px; 
+        }
+
+        .btn-primary { background: var(--cp-blue); color: #fff; }
+        .btn-success { background: var(--cp-green); color: white; font-size: 15px; }
+        
+        .btn-maps-premium { 
+            width: 100%;
+            height: 44px;
+            background: var(--cp-dark); 
+            color: #FFFFFF; 
+            border: none;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: background 0.15s ease;
+        }
+        .btn-maps-premium:active {
+            background: #2C2C2E;
+        }
+        
+        #map { 
+            flex: 1;
+            height: 100%; 
+            z-index: 1;
+        }
+
+        .total-banner { 
+            background: #34C759; 
+            color: #fff; 
+            border-radius: 12px; 
+            padding: 12px; 
+            text-align: center; 
+            margin-top: 10px; 
+        }
+
+        #val-total { font-size: 26px; font-weight: 900; }
+        
+        #archive-modal { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 99999; 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            padding-left: env(safe-area-inset-left, 10px);
+            padding-right: env(safe-area-inset-right, 10px);
+        }
+
+        #archive-content { 
+            width: 100%; 
+            max-width: 850px;
+            background: #fff; 
+            border-radius: 20px; 
+            padding: 15px; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            box-sizing: border-box;
+        }
+
+        .archive-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .archive-table th, .archive-table td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 12px; }
+
+        .delete-btn {
+            background: #FF3B30;
+            color: white;
+            border: none;
+            padding: 4px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toll-link { 
+            color: var(--cp-blue); 
+            font-weight: 800; 
+            text-decoration: none; 
+            font-size: 12px; 
+            border: 1.5px solid var(--cp-blue); 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            margin-right: 6px; 
+            display: inline-block; 
+            margin-top: 6px;
+            background: #FFFFFF;
+        }
+
+        .flex-box { display: flex; gap: 8px; }
+        .flex-child { flex: 1; }
+
+        .balance-box {
+            background: #F2F2F7;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 6px;
+            border-left: 4px solid var(--cp-orange);
+        }
+        .balance-title { font-weight: bold; color: #1C1C1E; margin-bottom: 2px; font-size: 12px; }
+        .debt-line { font-size: 12px; margin: 2px 0; color: #3A3A3C; }
+
+        /* BLOCCHETTI INPUT COMODI DA DIGITARE */
+        .input-group-box {
+            background: #F9F9FB;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #D1D1D6;
+            flex: 1;
+        }
+
+        @media (orientation: portrait) {
+            #rotate-warning { display: flex; }
+            #main-app { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="pwa-instructions">
+    <div style="font-size: 50px; margin-bottom: 15px;">📲</div>
+    <h2 style="margin: 0 0 10px 0; font-size: 20px;">Installa l'App CarPlay</h2>
+    <p style="margin: 0 0 25px 0; color: #AEAEB2; font-size: 14px; line-height: 1.4;">
+        Per bloccare lo schermo intero ed eliminare del tutto le barre:<br><br>
+        1. Premi il tasto <b>Condividi</b> in basso (quadrato con freccia in alto <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'/><polyline points='16 6 12 2 8 6'/><line x1='12' y1='2' x2='12' y2='15'/></svg>" style="vertical-align:middle;">)<br>
+        2. Clicca su <b>"Aggiungi alla schermata Home"</b><br>
+        3. Avvia l'app direttamente dall'icona creata sulla Home!
+    </p>
+    <button class="btn btn-primary" style="width: auto; padding: 0 30px;" onclick="document.getElementById('pwa-instructions').style.display='none'">Usa nel browser (Con barre)</button>
+</div>
+
+<div id="rotate-warning">
+    <div class="icon">🔄</div>
+    <h2 style="margin: 0 0 5px 0; font-size: 18px;">Gira l'iPhone in Orizzontale</h2>
+    <p style="margin: 0; color: #8E8E93; font-size: 13px;">L'interfaccia CarPlay richiede lo schermo panoramico.</p>
+</div>
+
+<div id="landing-page">
+    <h1 style="margin-bottom:15px; font-size: 18px; font-weight: 800;">Seleziona Veicolo</h1>
+    <div class="asset-container">
+        <div class="asset-tile" onclick="avviaApp('panda')">
+            <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight" interaction-prompt="none"></model-viewer>
+            <span style="font-weight:700; font-size: 14px;">Fiat Panda Hybrid</span>
         </div>
-        <div id="map-rb" style="flex:1;"></div>
+        <div class="asset-tile" onclick="avviaApp('corsa')">
+            <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate interaction-prompt="none"></model-viewer>
+            <span style="font-weight:700; font-size: 14px;">Opel Corsa 1.2</span>
+        </div>
     </div>
 </div>
 
+<div id="archive-modal">
+    <div id="archive-content">
+        <h2 style="font-size: 18px; margin-top: 0; margin-bottom: 12px;">Archivio Spese & Saldi</h2>
+        
+        <div class="flex-box" style="margin-bottom: 10px;">
+            <div class="flex-child" style="background: #E5E5EA; padding: 12px; border-radius:12px;">
+                <span style="font-size:11px; font-weight:bold; color:#555;">RIMANENZA CASSA COMUNE</span>
+                <div id="modal-cassa-rimanente" style="font-size:20px; font-weight:bold; color:var(--cp-blue);">0.00 €</div>
+            </div>
+        </div>
+
+        <table class="archive-table">
+            <thead>
+                <tr><th>Giorno</th><th>Tratta</th><th>Benzina</th><th>Pedaggi</th><th>Extra</th><th>Totale</th><th>Pagatori</th><th>Azioni</th></tr>
+            </thead>
+            <tbody id="archive-list"></tbody>
+        </table>
+
+        <div class="flex-box">
+            <div class="flex-child">
+                <div class="balance-box" style="border-left-color: var(--cp-orange);">
+                    <div class="balance-title">📊 PRIMO SALDO (Fino al 7 Ago)</div>
+                    <div id="debito-periodo-1">Nessuna spesa.</div>
+                </div>
+            </div>
+            <div class="flex-child">
+                <div class="balance-box" style="border-left-color: var(--cp-blue);">
+                    <div class="balance-title">🏁 SECONDO SALDO (8-9 Ago)</div>
+                    <div id="debito-periodo-2">Nessuna spesa.</div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <button class="btn btn-primary" onclick="chiudiArchivio()">CHIUDI ARCHIVIO</button>
+    </div>
+</div>
+
+<div id="main-app">
+    <div id="dock">
+        <div class="dock-icon" onclick="location.reload()">🏠</div>
+        <div class="dock-icon" onclick="rilevaGPS()">📍</div>
+        <div class="dock-icon" onclick="apriArchivio()">💶</div>
+    </div>
+
+    <div id="app-body-wrapper">
+        <div id="dashboard">
+            <div class="tile">
+                <div id="mini-car-box">
+                    <model-viewer id="dashboard-viewer" auto-rotate bounds="tight" camera-orbit="45deg 75deg 105%" disable-zoom interaction-prompt="none" onclick="apriArchivio()"></model-viewer>
+                </div>
+                <h2 id="car-title-display" style="font-size:14px; font-weight:800; text-align:center; margin-top:0; margin-bottom:8px;">Navigatore</h2>
+                
+                <label>Giorno di Viaggio</label>
+                <div id="day-selector-pills" class="horizontal-pills"></div>
+
+                <label>Seleziona la Tratta Specificata</label>
+                <div id="leg-selector-pills" class="horizontal-pills"></div>
+
+                <div class="flex-box">
+                    <div class="flex-child">
+                        <label>Partenza</label>
+                        <input type="text" id="start" readonly>
+                    </div>
+                    <div class="flex-child">
+                        <label>Arrivo</label>
+                        <input type="text" id="end" readonly>
+                    </div>
+                </div>
+                
+                <label>Prezzo Carburante (€/L)</label>
+                <input type="number" id="fuel-price" value="1.850" step="0.001">
+
+                <button class="btn btn-primary" onclick="calcola()">ANALIZZA PERCORSO</button>
+            </div>
+
+            <div class="tile">
+                <label>Logistica e Pedaggi</label>
+                <div id="guide-content" style="font-size:13px; line-height: 1.3; font-weight: 500; color:#1C1C1E;">Seleziona un giorno.</div>
+                <div style="margin-top:4px;">
+                    <a href="https://www.unipolmove.it/calcola-pedaggio/" target="_blank" class="toll-link">Tariffe Italia ↗</a>
+                    <a href="https://www.vinci-autoroutes.com/fr/conseils/autoroute-mode-demploi/tarifs-peage-vinci-autoroutes/" target="_blank" class="toll-link">Tariffe Francia ↗</a>
+                </div>
+            </div>
+
+            <div class="tile" style="background: #F9F9FB;">
+                <label style="color: #2E7D32; font-weight: 800;">💰 Controllo Cassa Comune</label>
+                <div class="flex-box" style="margin-top: 2px;">
+                    <div class="flex-child">
+                        <label>Fondo Iniziale (€)</label>
+                        <input type="number" id="cassa-iniziale" value="500" onchange="aggiornaCassaComune()">
+                    </div>
+                    <div class="flex-child" style="text-align: right;">
+                        <label>Disponibilità</label>
+                        <div id="cassa-rimanente" style="font-size: 16px; font-weight: 800; color: #1B5E20; margin-top: 8px;">500.00 €</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tile" id="results-tile" style="display:none;">
+                <label style="color:var(--cp-blue); font-weight:800; font-size:12px;">Stima Benzina Smart: <span id="hint-fuel" style="font-size:14px;">0.00</span>€</label>
+                
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px; margin-bottom:10px;">
+                    <div class="flex-box">
+                        <div class="input-group-box">
+                            <label>⛽ Benzina (€)</label>
+                            <input type="number" id="actual-fuel" value="0" oninput="aggiornaTotale()">
+                            <label>Chi?</label>
+                            <select id="payer-fuel">
+                                <option value="cassa">💳 Cassa</option>
+                                <option value="mario">👨‍✈️ Mario</option>
+                                <option value="samuele">👦 Samu</option>
+                                <option value="michael">👱 Mich</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group-box">
+                            <label>🛣️ Pedaggi (€)</label>
+                            <input type="number" id="actual-toll" value="0" oninput="aggiornaTotale()">
+                            <label>Chi?</label>
+                            <select id="payer-toll">
+                                <option value="cassa">💳 Cassa</option>
+                                <option value="mario">👨‍✈️ Mario</option>
+                                <option value="samuele">👦 Samu</option>
+                                <option value="michael">👱 Mich</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group-box">
+                        <label>🛍️ Spese Extra (€)</label>
+                        <input type="number" id="actual-extra" value="0" oninput="aggiornaTotale()">
+                        <label>Chi Paga?</label>
+                        <select id="payer-extra">
+                            <option value="cassa">💳 Cassa</option>
+                            <option value="mario">👨‍✈️ Mario</option>
+                            <option value="samuele">👦 Samu</option>
+                            <option value="michael">👱 Mich</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" onclick="salvaArchivio()">SALVA IN ARCHIVIO</button>
+
+                <div class="total-banner">
+                    <div id="km-display" style="font-size:12px; font-weight:800; margin-bottom:2px; letter-spacing:0.5px;">-- KM TOTALI</div>
+                    <span id="val-total">0.00 €</span>
+                    <button class="btn btn-maps-premium" onclick="apriNavigatoreEsterno()">Avvia Navigazione 🧭</button>
+<button class="btn btn-maps-premium" style="background: #27ae60; margin-top: 10px;" onclick="vaiInHotel()">
+    📍 Vai in Hotel 🏨
+</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    function apriRoadbook() {
-        document.getElementById('roadbook-modal').style.display = 'block';
-        if (typeof rbMap === 'undefined') {
-            window.rbMap = L.map('map-rb').setView([43.5, 5.0], 6);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png').addTo(rbMap);
-            popolaListaRB();
-        }
-        setTimeout(() => rbMap.invalidateSize(), 500);
+    const carConfig = {
+        panda: { name: "Fiat Panda Hybrid 2024", consumption: 18.0, file: "fiat_panda-v1.glb", center: "auto" },
+        corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
+    };
+
+ const itinerary = {
+        "2": { points: ["Genova", "Portofino"], label: "2 Ago" },
+        "3": { points: ["Portofino", "Cannes"], label: "3 Ago" },
+        "4": { points: ["Cannes", "Saint-Tropez", "Aix-en-Provence"], label: "4 Ago" },
+        "5": { points: ["Aix-en-Provence", "Gole del Verdon", "Lago di Sainte-Croix", "Aix-en-Provence"], label: "5 Ago" },
+        "6": { points: ["Aix-en-Provence", "Cassis", "Le Calanques", "Marsiglia"], label: "6 Ago" },
+        "7": { points: ["Marsiglia", "Barcellona"], label: "7 Ago" },
+        "8": { points: ["Barcellona"], label: "8 Ago" },
+        "9": { points: ["Barcellona", "Sanremo"], label: "9 Ago" },
+        "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
+    };
+
+    let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
+    let databaseArray = []; 
+
+const hotelDatabase = {
+    "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
+    "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
+    "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "6": "B&B Marseille Prado, 6 Allée Marcel Leclerc, 13008 Marsiglia, Francia",
+    "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
+};
+    function abilitaTrascina(selettore) {
+        const containers = document.querySelectorAll(selettore);
+        containers.forEach(slider => {
+            let isDown = false, startX, scrollLeft;
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; });
+            slider.addEventListener('mouseup', () => { isDown = false; });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault(); const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
+            });
+        });
+
+const hotelDatabase = {
+    "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
+    "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
+    "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+    "6": "B&B Marseille Prado, 6 Allée Marcel Leclerc, 13008 Marsiglia, Francia",
+    "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+    "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
+};
     }
 
-    function popolaListaRB() {
-        const list = document.getElementById('list-rb');
-        Object.keys(itinerary).forEach(dayKey => {
-            const div = document.createElement('div');
-            div.style.padding = "10px"; div.style.borderBottom = "1px solid #ddd"; div.style.cursor = "pointer";
-            div.innerHTML = `<strong>Giorno ${dayKey}</strong><br>${itinerary[dayKey].points.join(' ➔ ')}`;
-            div.onclick = () => alert("Giorno " + dayKey + " selezionato");
-            list.appendChild(div);
+    function avviaApp(id) {
+        activeCar = carConfig[id];
+        document.getElementById('landing-page').style.display = 'none';
+        document.getElementById('main-app').style.display = 'flex';
+        
+        const viewer = document.getElementById('dashboard-viewer');
+        viewer.src = activeCar.file;
+        
+        if (id === 'corsa') {
+            viewer.setAttribute('orientation', '0deg -90deg 90deg');
+        } else {
+            viewer.removeAttribute('orientation');
+        }
+
+        if(activeCar.center !== "auto") {
+            viewer.setAttribute("center", activeCar.center);
+        } else {
+            viewer.removeAttribute("center");
+        }
+        
+        document.getElementById('car-title-display').innerText = activeCar.name;
+
+        map = L.map('map', { zoomControl: false }).setView([43.5, 5.0], 7);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+        
+        if(localStorage.getItem("cassa_iniziale_v11")) {
+            document.getElementById("cassa-iniziale").value = localStorage.getItem("cassa_iniziale_v11");
+        }
+
+        renderDayPills();
+        cambiaGiorno("3");
+        abilitaTrascina('.horizontal-pills');
+        
+        attivaSincronizzazioneFirebase();
+        
+        window.addEventListener('resize', () => { if(map) map.invalidateSize(); });
+        setTimeout(() => { map.invalidateSize(); }, 400);
+    }
+
+    function attivaSincronizzazioneFirebase() {
+        if (!window.db || !window.firestoreLib) {
+            setTimeout(attivaSincronizzazioneFirebase, 500);
+            return;
+        }
+        const { collection, onSnapshot } = window.firestoreLib;
+        
+        onSnapshot(collection(window.db, "tripArch_v11"), (snapshot) => {
+            let nuoviDati = [];
+            snapshot.forEach((doc) => {
+                nuoviDati.push({ firebaseId: doc.id, ...doc.data() });
+            });
+            databaseArray = nuoviDati;
+            aggiornaCassaComune();
+            renderizzaTabellaArchivio();
         });
     }
-</script>
 
+    function renderDayPills() {
+        const container = document.getElementById("day-selector-pills");
+        container.innerHTML = "";
+        Object.keys(itinerary).forEach(day => {
+            const p = document.createElement("button");
+            p.className = "pill"; p.innerText = itinerary[day].label;
+            p.onclick = () => {
+                document.querySelectorAll("#day-selector-pills .pill").forEach(el => el.classList.remove("active"));
+                p.classList.add("active"); cambiaGiorno(day);
+            };
+            container.appendChild(p);
+        });
+        container.querySelector(".pill").classList.add("active");
+    }
+
+    function cambiaGiorno(day) {
+        currentDay = day;
+        const data = itinerary[day];
+        const container = document.getElementById("leg-selector-pills");
+        container.innerHTML = "";
+        for (let i = 0; i < data.points.length - 1; i++) {
+            const p = document.createElement("button");
+            p.className = "pill"; p.innerText = `${data.points[i]} → ${data.points[i + 1]}`;
+            p.onclick = () => {
+                document.querySelectorAll("#leg-selector-pills .pill").forEach(el => el.classList.remove("active"));
+                p.classList.add("active"); impostaTratta(i);
+            };
+            container.appendChild(p);
+        }
+        document.getElementById("guide-content").innerText = data.info;
+        if(container.firstChild) container.firstChild.classList.add("active");
+        impostaTratta(0);
+    }
+
+    function impostaTratta(idx) {
+        const data = itinerary[currentDay];
+        document.getElementById("start").value = data.points[idx];
+        document.getElementById("end").value = data.points[idx + 1];
+    }
+
+    async function calcola() {
+        const p1 = document.getElementById("start").value;
+        const p2 = document.getElementById("end").value;
+        const fPrice = parseFloat(document.getElementById("fuel-price").value);
+        
+        try {
+            const g1 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${p1}`).then(r => r.json());
+            const g2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${p2}`).then(r => r.json());
+            const osrm = await fetch(`https://router.project-osrm.org/route/v1/driving/${g1[0].lon},${g1[0].lat};${g2[0].lon},${g2[0].lat}?overview=full&geometries=geojson`).then(r => r.json());
+            
+            const route = osrm.routes[0];
+            currentKm = (route.distance / 1000).toFixed(1);
+            
+            const fuelHint = (currentKm / activeCar.consumption) * fPrice;
+            document.getElementById("hint-fuel").innerText = fuelHint.toFixed(2);
+            
+            document.getElementById("km-display").innerText = currentKm + " KM";
+            document.getElementById("results-tile").style.display = "block";
+
+            if (routeLayer) map.removeLayer(routeLayer);
+            routeLayer = L.geoJSON(route.geometry, { style: { color: "#007AFF", weight: 5 } }).addTo(map);
+            map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
+            
+            aggiornaTotale();
+        } catch (e) { alert("Errore mappe. Riprova."); }
+    }
+
+    function apriNavigatoreEsterno() {
+        const partenza = encodeURIComponent(document.getElementById("start").value);
+        const arrivo = encodeURIComponent(document.getElementById("end").value);
+        const urlmappe = `http://maps.google.com/?saddr=${partenza}&daddr=${arrivo}&dirflg=d`;
+        window.open(urlmappe, '_blank');
+    }
+
+function vaiInHotel() {
+    const indirizzo = hotelDatabase[currentDay];
+    if (!indirizzo) { 
+        alert("Nessun hotel registrato per questo giorno: " + currentDay); 
+        return; 
+    }
+    
+    // URL corretto per Google Maps (direzioni)
+    const url = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(indirizzo);
+    window.open(url, '_blank');
+}
+    async function salvaArchivio() {
+        const b = parseFloat(document.getElementById("actual-fuel").value) || 0;
+        const t = parseFloat(document.getElementById("actual-toll").value) || 0;
+        const e = parseFloat(document.getElementById("actual-extra").value) || 0;
+        
+        const pFuel = document.getElementById("payer-fuel").value;
+        const pToll = document.getElementById("payer-toll").value;
+        const pExtra = document.getElementById("payer-extra").value;
+
+        if((b+t+e) === 0) return;
+
+        const nuovaSpesa = {
+            id: Date.now(),
+            giorno: currentDay,
+            tratta: `${document.getElementById("start").value} → ${document.getElementById("end").value}`,
+            benzina: b,
+            pedaggi: t,
+            extra: e,
+            totale: b + t + e,
+            payerFuel: pFuel,
+            payerToll: pToll,
+            payerExtra: pExtra
+        };
+
+        try {
+            const { collection, addDoc } = window.firestoreLib;
+            await addDoc(collection(window.db, "tripArch_v11"), nuovaSpesa);
+            document.getElementById("actual-fuel").value = 0;
+            document.getElementById("actual-toll").value = 0;
+            document.getElementById("actual-extra").value = 0;
+            aggiornaTotale();
+            alert("Salvato! 👍");
+        } catch (errore) { alert("Errore salvataggio cloud."); }
+    }
+
+    async function eliminaVoce(firebaseId) {
+        if(confirm("Vuoi cancellare questa spesa?")) {
+            try {
+                const { doc, deleteDoc } = window.firestoreLib;
+                await deleteDoc(doc(window.db, "tripArch_v11", firebaseId));
+            } catch (errore) { alert("Errore."); }
+        }
+    }
+
+    function formattaPagatore(tipo, chi) {
+        if(tipo === 0) return "";
+        const icone = { cassa: "💳", mario: "M", samuele: "S", michael: "MCH" };
+        return `${icone[chi] || chi}`;
+    }
+
+    function aggiornaCassaComune() {
+        const budgetIniziale = parseFloat(document.getElementById("cassa-iniziale").value) || 0;
+        localStorage.setItem("cassa_iniziale_v11", budgetIniziale);
+        let spesoCassa = 0;
+        databaseArray.forEach(item => {
+            if(item.benzina > 0 && item.payerFuel === 'cassa') spesoCassa += item.benzina;
+            if(item.pedaggi > 0 && item.payerToll === 'cassa') spesoCassa += item.pedaggi;
+            if(item.extra > 0 && item.payerExtra === 'cassa') spesoCassa += item.extra;
+        });
+        const rimanenza = budgetIniziale - spesoCassa;
+        document.getElementById("cassa-rimanente").innerText = rimanenza.toFixed(2) + " €";
+        document.getElementById("modal-cassa-rimanente").innerText = rimanenza.toFixed(2) + " €";
+    }
+
+    function apriArchivio() { document.getElementById("archive-modal").style.display = "flex"; }
+    function chiudiArchivio() { document.getElementById("archive-modal").style.display = "none"; }
+    function rilevaGPS() { navigator.geolocation.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos.coords.longitude], 13)); }
+
+    function renderizzaTabellaArchivio() {
+        document.getElementById("archive-list").innerHTML = databaseArray.map(i => {
+            // Funzione interna per creare un "badge" leggibile
+            const creaBadge = (importo, pagatore) => {
+                if (!importo || importo <= 0) return "";
+                const colori = { cassa: "#007AFF", mario: "#FF9500", samuele: "#34C759", michael: "#5856D6" };
+                const nomi = { cassa: "💳", mario: "M", samuele: "S", michael: "Mi" };
+                return `<span style="background:${colori[pagatore]}; color:white; padding:2px 6px; border-radius:6px; font-size:10px; margin:2px; display:inline-block; font-weight:bold;">
+                    ${nomi[pagatore] || pagatore}
+                </span>`;
+            };
+
+            return `<tr>
+                <td>${i.giorno} Ago</td>
+                <td>${i.tratta}</td>
+                <td>${i.benzina > 0 ? i.benzina + '€' : ''} ${creaBadge(i.benzina, i.payerFuel)}</td>
+                <td>${i.pedaggi > 0 ? i.pedaggi + '€' : ''} ${creaBadge(i.pedaggi, i.payerToll)}</td>
+                <td>${i.extra > 0 ? i.extra + '€' : ''} ${creaBadge(i.extra, i.payerExtra)}</td>
+                <td><b>${(i.totale || 0).toFixed(2)}€</b></td>
+                <td><button class="delete-btn" onclick="eliminaVoce('${i.firebaseId}')">❌</button></td>
+            </tr>`;
+        }).join("");
+        calcolaContiIntelligenti(databaseArray);
+    }
+    function calcolaContiIntelligenti(arch) {
+        let bilancioP1 = { mario: 0, samuele: 0, michael: 0 };
+        let bilancioP2 = { mario: 0, michael: 0 };
+
+        arch.forEach(spesa => {
+            const isPeriodo1 = parseInt(spesa.giorno) <= 7;
+            const scomp = [
+                { importo: spesa.benzina, pagatore: spesa.payerFuel },
+                { importo: spesa.pedaggi, pagatore: spesa.payerToll },
+                { importo: spesa.extra, pagatore: spesa.payerExtra }
+            ];
+
+            scomp.forEach(v => {
+                if (v.importo <= 0 || v.pagatore === 'cassa') return;
+                if (isPeriodo1) {
+                    let quota = v.importo / 3;
+                    bilancioP1.mario -= quota; bilancioP1.samuele -= quota; bilancioP1.michael -= quota;
+                    if (bilancioP1[v.pagatore] !== undefined) bilancioP1[v.pagatore] += v.importo;
+                } else {
+                    let quota = v.importo / 2;
+                    bilancioP2.mario -= quota; bilancioP2.michael -= quota;
+                    if (bilancioP2[v.pagatore] !== undefined) bilancioP2[v.pagatore] += v.importo;
+                }
+            });
+        });
+
+        document.getElementById("debito-periodo-1").innerHTML = generaRisoluzioneDebiti(bilancioP1);
+        document.getElementById("debito-periodo-2").innerHTML = generaRisoluzioneDebiti(bilancioP2);
+    }
+
+    function generaRisoluzioneDebiti(bilancio) {
+        let dare = [], avere = [];
+        for (let persona in bilancio) {
+            let val = parseFloat(bilancio[persona].toFixed(2));
+            if (val < -0.02) dare.push({ nome: persona, importo: Math.abs(val) });
+            else if (val > 0.02) avere.push({ nome: persona, importo: val });
+        }
+        let output = "", i = 0, j = 0;
+        while (i < dare.length && j < avere.length) {
+            let debitore = dare[i], creditore = avere[j];
+            let importoMinimo = Math.min(debitore.importo, creditore.importo);
+            output += `<div class="debt-line">🫱 <b>${debitore.nome.toUpperCase()}</b> → <b>${importoMinimo.toFixed(2)} €</b> a <b>${creditore.nome.toUpperCase()}</b></div>`;
+            debitore.importo -= importoMinimo; creditore.importo -= importoMinimo;
+            if (debitore.importo < 0.02) i++;
+            if (creditore.importo < 0.02) j++;
+        }
+        return output === "" ? "In pari!" : output;
+    }
+</script>
+<script type="module">
+  // 1. Importa le funzioni necessarie
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+  // 2. Configurazione del nuovo progetto
+  const firebaseConfig = {
+    apiKey: "AIzaSyA_m5HaUtiSxtnRXe9Gp9VtZ7fU6RfgDYI",
+    authDomain: "viaggiogenovafinale.firebaseapp.com",
+    projectId: "viaggiogenovafinale",
+    storageBucket: "viaggiogenovafinale.firebasestorage.app",
+    messagingSenderId: "575085388587",
+    appId: "1:575085388587:web:4eda7079b957d3a68f9b6e"
+  };
+
+  // 3. Inizializzazione
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 4. Esportazione per far funzionare le tue funzioni (salvataggio/cancellazione)
+  window.db = db;
+  window.firestoreLib = { collection, onSnapshot, addDoc, doc, deleteDoc };
+  console.log("Firebase e Firestore inizializzati correttamente!");
+</script>
+<script>
+    window.addEventListener('load', () => {
+        // Questa funzione cerca la variabile 'map' che deve esistere nel tuo codice
+        function caricaZone() {
+            // Controlla se la variabile 'map' esiste (Leaflet deve averla creata)
+            if (typeof map !== 'undefined') {
+                console.log("Mappa trovata, carico le zone...");
+                
+                // Carica Barcellona
+                fetch('zbe_barcellona.geojson')
+                    .then(res => res.json())
+                    .then(data => L.geoJSON(data, { style: { color: 'red', weight: 3, fillColor: 'red', fillOpacity: 0.3 } }).addTo(map));
+
+                // Carica Marsiglia
+                fetch('zfe_marsiglia.geojson')
+                    .then(res => res.json())
+                    .then(data => L.geoJSON(data, { style: { color: 'blue', weight: 3, fillColor: 'blue', fillOpacity: 0.3 } }).addTo(map));
+            } else {
+                console.warn("Variabile 'map' non trovata! Riprovo tra 1 secondo...");
+                setTimeout(caricaZone, 1000); // Se non la trova, riprova
+            }
+        }
+        caricaZone();
+    });
+</script>
+<script>
+    window.addEventListener('load', () => {
+        // Questa funzione aspetta che la mappa esista e aggiunge SOLO le casette
+        function aggiungiCasette() {
+            if (typeof map === 'undefined') {
+                setTimeout(aggiungiCasette, 500);
+                return;
+            }
+
+            // La tua lista di alberghi con le coordinate
+            const alberghi = [
+                { nome: "Il Gattonero", lat: 44.4446, lon: 9.2558 },
+                { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
+                { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
+                { nome: "B&B Marseille Prado", lat: 43.2764, lon: 5.3912 },
+                { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
+                { nome: "Hotel Ariston Sanremo", lat: 43.8152, lon: 7.7770 }
+            ];
+
+            const iconaHotel = L.divIcon({
+                html: `<div style="font-size: 24px;">🏨</div>`,
+                className: 'marker-hotel',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+            alberghi.forEach(hotel => {
+                L.marker([hotel.lat, hotel.lon], { icon: iconaHotel })
+                    .addTo(map)
+                    .bindPopup(`<b>${hotel.nome}</b>`);
+            });
+            console.log("Casette aggiunte correttamente!");
+        }
+
+        aggiungiCasette();
+    });
+</script>
+</body>
+</html>
 </body>
 </html>
