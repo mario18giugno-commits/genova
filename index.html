@@ -1022,7 +1022,6 @@ function vaiInHotel() {
         aggiungiCasette();
     });
 </script>
-
 <div id="roadbook-modal" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85);">
     <div style="background:#fff; height:100vh; position:relative; display:flex;">
         <button onclick="document.getElementById('roadbook-modal').style.display='none'" style="position:absolute; top:10px; right:10px; z-index:9999; font-size:20px; cursor:pointer;">❌</button>
@@ -1041,14 +1040,14 @@ function vaiInHotel() {
             window.rbMap = L.map('map-rb').setView([43.5, 5.0], 6);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png').addTo(rbMap);
             window.rbLayer = L.layerGroup().addTo(rbMap);
-            popolaListaRB();
+            renderizzaRoadbook();
         }
         setTimeout(() => rbMap.invalidateSize(), 200);
     }
 
-    function popolaListaRB() {
+    function renderizzaRoadbook() {
         const list = document.getElementById('list-rb');
-        // Usiamo Object.keys perché 'itinerary' è un oggetto
+        list.innerHTML = "";
         Object.keys(itinerary).forEach(dayKey => {
             const d = itinerary[dayKey];
             const div = document.createElement('div');
@@ -1056,8 +1055,12 @@ function vaiInHotel() {
             div.innerHTML = `<strong>Giorno ${dayKey}</strong><br>${d.points.join(' ➔ ')}`;
             div.onclick = () => {
                 window.rbLayer.clearLayers();
-                // NOTA: Qui dovrai mappare i nomi dei punti in coordinate per vedere i marker
-                alert("Visualizzazione giorno " + dayKey);
+                // Esempio: aggiungi marker per i punti del giorno
+                d.points.forEach(p => {
+                    // Nota: Qui dovresti avere le coordinate per ogni punto, 
+                    // se non le hai, il marker non apparirà.
+                    console.log("Visualizzo: " + p);
+                });
             };
             list.appendChild(div);
         });
