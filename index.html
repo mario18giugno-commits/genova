@@ -605,8 +605,7 @@
         "3": { points: ["Portofino", "Cannes"], label: "3 Ago" },
         "4": { points: ["Cannes", "Saint-Tropez", "Aix-en-Provence"], label: "4 Ago" },
         "5": { points: ["Aix-en-Provence", "Gole del Verdon", "Lago di Sainte-Croix", "Aix-en-Provence"], label: "5 Ago" },
-        "6": { points: ["Aix-en-Provence", "Cassis", "Le Calanques", "Marsiglia"], label: "6 Ago" },
-        "7": { points: ["Marsiglia", "Barcellona"], label: "7 Ago" },
+"6": { points: ["Aix-en-Provence", "Cassis", "Le Calanques", "Logis Hotel Noemys, Aubagne"], label: "6 Ago" },        "7": { points: ["Marsiglia", "Barcellona"], label: "7 Ago" },
         "8": { points: ["Barcellona"], label: "8 Ago" },
    "9": { points: ["Barcellona", "Hotel Momora, Bardineto"], label: "9 Ago" },
         "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
@@ -740,32 +739,54 @@
         document.getElementById("end").value = data.points[idx + 1];
     }
 
-    async function calcola() {
-        const p1 = document.getElementById("start").value;
-        const p2 = document.getElementById("end").value;
-        const fPrice = parseFloat(document.getElementById("fuel-price").value);
-        
-        try {
-            const g1 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${p1}`).then(r => r.json());
-            const g2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${p2}`).then(r => r.json());
-            const osrm = await fetch(`https://router.project-osrm.org/route/v1/driving/${g1[0].lon},${g1[0].lat};${g2[0].lon},${g2[0].lat}?overview=full&geometries=geojson`).then(r => r.json());
-            
-            const route = osrm.routes[0];
-            currentKm = (route.distance / 1000).toFixed(1);
-            
-            const fuelHint = (currentKm / activeCar.consumption) * fPrice;
-            document.getElementById("hint-fuel").innerText = fuelHint.toFixed(2);
-            
-            document.getElementById("km-display").innerText = currentKm + " KM";
-            document.getElementById("results-tile").style.display = "block";
+  async function calcola() {
+    const p1 = document.getElementById("start").value;
+    const p2 = document.getElementById("end").value;
+    const fPrice = parseFloat(document.getElementById("fuel-price").value);
+    
+    // Database di coordinate fisse per evitare errori di ricerca
+    const coordFisse = {
+        "Aix-en-Provence": {lat: 43.529, lon: 5.447},
+        "Cassis": {lat: 43.214, lon: 5.539},
+        "Le Calanques": {lat: 43.219, lon: 5.437},
+        "Logis Hotel Noemys, Aubagne": {lat: 43.303, lon: 5.586},
+        "Barcellona": {lat: 41.385, lon: 2.173},
+        "Hotel Momora, Bardineto": {lat: 44.208, lon: 8.167}
+    };
 
-            if (routeLayer) map.removeLayer(routeLayer);
-            routeLayer = L.geoJSON(route.geometry, { style: { color: "#007AFF", weight: 5 } }).addTo(map);
-            map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
-            
-            aggiornaTotale();
-        } catch (e) { alert("Errore mappe. Riprova."); }
+    try {
+        // Funzione helper per ottenere le coordinate
+        const getCoord = async (nome) => {
+            if (coordFisse[nome]) return coordFisse[nome];
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nome)}&limit=1`).then(r => r.json());
+            if (!res || res.length === 0) throw new Error("Luogo non trovato");
+            return { lat: parseFloat(res[0].lat), lon: parseFloat(res[0].lon) };
+        };
+
+        const c1 = await getCoord(p1);
+        const c2 = await getCoord(p2);
+
+        const osrm = await fetch(`https://router.project-osrm.org/route/v1/driving/${c1.lon},${c1.lat};${c2.lon},${c2.lat}?overview=full&geometries=geojson`).then(r => r.json());
+        
+        const route = osrm.routes[0];
+        currentKm = (route.distance / 1000).toFixed(1);
+        
+        const fuelHint = (currentKm / activeCar.consumption) * fPrice;
+        document.getElementById("hint-fuel").innerText = fuelHint.toFixed(2);
+        
+        document.getElementById("km-display").innerText = currentKm + " KM";
+        document.getElementById("results-tile").style.display = "block";
+
+        if (routeLayer) map.removeLayer(routeLayer);
+        routeLayer = L.geoJSON(route.geometry, { style: { color: "#007AFF", weight: 5 } }).addTo(map);
+        map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
+        
+        aggiornaTotale();
+    } catch (e) { 
+        console.error(e);
+        alert("Errore nel calcolo del percorso. Verifica la connessione o il nome della località."); 
     }
+}
 
     function apriNavigatoreEsterno() {
         const partenza = encodeURIComponent(document.getElementById("start").value);
