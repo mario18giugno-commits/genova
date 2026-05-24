@@ -981,7 +981,6 @@
                 iconAnchor: [15, 15]
             });
 
-            // Coordinate approssimative per i nuovi indirizzi
             const alberghi = [
                 { nome: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 },
                 { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
@@ -996,7 +995,21 @@
                     .addTo(map)
                     .bindPopup(`<b>${hotel.nome}</b>`);
             });
+            
+            // --- INSERITO IL CARICAMENTO ZONE QUI ---
+            caricaZone();
         }
+
+        function caricaZone() {
+            fetch('zbe_barcellona.geojson')
+                .then(res => res.json())
+                .then(data => L.geoJSON(data, { style: { color: 'red', weight: 3, fillColor: 'red', fillOpacity: 0.3 } }).addTo(map));
+
+            fetch('zfe_marsiglia.geojson')
+                .then(res => res.json())
+                .then(data => L.geoJSON(data, { style: { color: 'blue', weight: 3, fillColor: 'blue', fillOpacity: 0.3 } }).addTo(map));
+        }
+
         aggiungiCasette();
     });
 </script>
