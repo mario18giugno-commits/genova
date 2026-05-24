@@ -581,9 +581,9 @@
                     <div id="km-display" style="font-size:12px; font-weight:800; margin-bottom:2px; letter-spacing:0.5px;">-- KM TOTALI</div>
                     <span id="val-total">0.00 €</span>
                     <button class="btn btn-maps-premium" onclick="apriNavigatoreEsterno()">Avvia Navigazione 🧭</button>
-<button class="btn btn-maps-premium" style="background: #27ae60; margin-top: 10px;" onclick="vaiInHotel()">
-    📍 Vai in Hotel 🏨
-</button>
+                    <button class="btn btn-maps-premium" style="background: #27ae60; margin-top: 10px;" onclick="vaiInHotel()">
+                        📍 Vai in Hotel 🏨
+                    </button>
                 </div>
             </div>
         </div>
@@ -600,7 +600,7 @@
         corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
     };
 
- const itinerary = {
+    const itinerary = {
         "2": { points: ["Genova", "Portofino"], label: "2 Ago" },
         "3": { points: ["Portofino", "Cannes"], label: "3 Ago" },
         "4": { points: ["Cannes", "Saint-Tropez", "Aix-en-Provence"], label: "4 Ago" },
@@ -615,16 +615,17 @@
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
     let databaseArray = []; 
 
-const hotelDatabase = {
-    "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
-    "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
-    "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
-    "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
-    "6": "B&B Marseille Prado, 6 Allée Marcel Leclerc, 13008 Marsiglia, Francia",
-    "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
-    "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
-    "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
-};
+    const hotelDatabase = {
+        "2": "Elegants Apartments Rapallo, Via Fratelli Betti 175A/9, 16035 Rapallo, Italia",
+        "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
+        "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+        "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
+        "6": "Logis Hotel Noemys, Chemin de la Gauthière, 13400 Aubagne, Francia",
+        "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+        "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
+        "9": "Hotel Momora, Piazza Vittorio Veneto 5, 17057 Bardineto, Italia"
+    };
+
     function abilitaTrascina(selettore) {
         const containers = document.querySelectorAll(selettore);
         containers.forEach(slider => {
@@ -640,17 +641,6 @@ const hotelDatabase = {
                 const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
             });
         });
-
-const hotelDatabase = {
-    "2": "Il Gattonero, Via Pian dei Ratti, Orero, Italia",
-    "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
-    "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
-    "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
-    "6": "B&B Marseille Prado, 6 Allée Marcel Leclerc, 13008 Marsiglia, Francia",
-    "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
-    "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
-    "9": "Hotel Ariston, Corso Giuseppe Mazzini 507, 18038 Sanremo, Italia"
-};
     }
 
     function avviaApp(id) {
@@ -739,7 +729,7 @@ const hotelDatabase = {
             };
             container.appendChild(p);
         }
-        document.getElementById("guide-content").innerText = data.info;
+        document.getElementById("guide-content").innerText = data.info || "";
         if(container.firstChild) container.firstChild.classList.add("active");
         impostaTratta(0);
     }
@@ -780,21 +770,20 @@ const hotelDatabase = {
     function apriNavigatoreEsterno() {
         const partenza = encodeURIComponent(document.getElementById("start").value);
         const arrivo = encodeURIComponent(document.getElementById("end").value);
-        const urlmappe = `http://maps.google.com/?saddr=${partenza}&daddr=${arrivo}&dirflg=d`;
+        const urlmappe = `https://www.google.com/maps/dir/?api=1&origin=${partenza}&destination=${arrivo}&travelmode=driving`;
         window.open(urlmappe, '_blank');
     }
 
-function vaiInHotel() {
-    const indirizzo = hotelDatabase[currentDay];
-    if (!indirizzo) { 
-        alert("Nessun hotel registrato per questo giorno: " + currentDay); 
-        return; 
+    function vaiInHotel() {
+        const indirizzo = hotelDatabase[currentDay];
+        if (!indirizzo) { 
+            alert("Nessun hotel registrato per questo giorno: " + currentDay); 
+            return; 
+        }
+        const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(indirizzo);
+        window.open(url, '_blank');
     }
-    
-    // URL corretto per Google Maps (direzioni)
-    const url = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(indirizzo);
-    window.open(url, '_blank');
-}
+
     async function salvaArchivio() {
         const b = parseFloat(document.getElementById("actual-fuel").value) || 0;
         const t = parseFloat(document.getElementById("actual-toll").value) || 0;
@@ -839,10 +828,11 @@ function vaiInHotel() {
         }
     }
 
-    function formattaPagatore(tipo, chi) {
-        if(tipo === 0) return "";
-        const icone = { cassa: "💳", mario: "M", samuele: "S", michael: "MCH" };
-        return `${icone[chi] || chi}`;
+    function aggiornaTotale() {
+        const b = parseFloat(document.getElementById("actual-fuel").value) || 0;
+        const t = parseFloat(document.getElementById("actual-toll").value) || 0;
+        const e = parseFloat(document.getElementById("actual-extra").value) || 0;
+        document.getElementById("val-total").innerText = (b + t + e).toFixed(2) + " €";
     }
 
     function aggiornaCassaComune() {
@@ -865,7 +855,6 @@ function vaiInHotel() {
 
     function renderizzaTabellaArchivio() {
         document.getElementById("archive-list").innerHTML = databaseArray.map(i => {
-            // Funzione interna per creare un "badge" leggibile
             const creaBadge = (importo, pagatore) => {
                 if (!importo || importo <= 0) return "";
                 const colori = { cassa: "#007AFF", mario: "#FF9500", samuele: "#34C759", michael: "#5856D6" };
@@ -887,6 +876,7 @@ function vaiInHotel() {
         }).join("");
         calcolaContiIntelligenti(databaseArray);
     }
+
     function calcolaContiIntelligenti(arch) {
         let bilancioP1 = { mario: 0, samuele: 0, michael: 0 };
         let bilancioP2 = { mario: 0, michael: 0 };
@@ -937,11 +927,9 @@ function vaiInHotel() {
     }
 </script>
 <script type="module">
-  // 1. Importa le funzioni necessarie
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
   import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-  // 2. Configurazione del nuovo progetto
   const firebaseConfig = {
     apiKey: "AIzaSyA_m5HaUtiSxtnRXe9Gp9VtZ7fU6RfgDYI",
     authDomain: "viaggiogenovafinale.firebaseapp.com",
@@ -951,58 +939,19 @@ function vaiInHotel() {
     appId: "1:575085388587:web:4eda7079b957d3a68f9b6e"
   };
 
-  // 3. Inizializzazione
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 4. Esportazione per far funzionare le tue funzioni (salvataggio/cancellazione)
   window.db = db;
   window.firestoreLib = { collection, onSnapshot, addDoc, doc, deleteDoc };
-  console.log("Firebase e Firestore inizializzati correttamente!");
 </script>
 <script>
     window.addEventListener('load', () => {
-        // Questa funzione cerca la variabile 'map' che deve esistere nel tuo codice
-        function caricaZone() {
-            // Controlla se la variabile 'map' esiste (Leaflet deve averla creata)
-            if (typeof map !== 'undefined') {
-                console.log("Mappa trovata, carico le zone...");
-                
-                // Carica Barcellona
-                fetch('zbe_barcellona.geojson')
-                    .then(res => res.json())
-                    .then(data => L.geoJSON(data, { style: { color: 'red', weight: 3, fillColor: 'red', fillOpacity: 0.3 } }).addTo(map));
-
-                // Carica Marsiglia
-                fetch('zfe_marsiglia.geojson')
-                    .then(res => res.json())
-                    .then(data => L.geoJSON(data, { style: { color: 'blue', weight: 3, fillColor: 'blue', fillOpacity: 0.3 } }).addTo(map));
-            } else {
-                console.warn("Variabile 'map' non trovata! Riprovo tra 1 secondo...");
-                setTimeout(caricaZone, 1000); // Se non la trova, riprova
-            }
-        }
-        caricaZone();
-    });
-</script>
-<script>
-    window.addEventListener('load', () => {
-        // Questa funzione aspetta che la mappa esista e aggiunge SOLO le casette
         function aggiungiCasette() {
             if (typeof map === 'undefined') {
                 setTimeout(aggiungiCasette, 500);
                 return;
             }
-
-            // La tua lista di alberghi con le coordinate
-            const alberghi = [
-                { nome: "Il Gattonero", lat: 44.4446, lon: 9.2558 },
-                { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
-                { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
-                { nome: "B&B Marseille Prado", lat: 43.2764, lon: 5.3912 },
-                { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
-                { nome: "Hotel Ariston Sanremo", lat: 43.8152, lon: 7.7770 }
-            ];
 
             const iconaHotel = L.divIcon({
                 html: `<div style="font-size: 24px;">🏨</div>`,
@@ -1011,14 +960,22 @@ function vaiInHotel() {
                 iconAnchor: [15, 15]
             });
 
+            // Coordinate approssimative per i nuovi indirizzi
+            const alberghi = [
+                { nome: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 },
+                { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
+                { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
+                { nome: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 },
+                { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
+                { nome: "Hotel Momora", lat: 44.208, lon: 8.167 }
+            ];
+
             alberghi.forEach(hotel => {
                 L.marker([hotel.lat, hotel.lon], { icon: iconaHotel })
                     .addTo(map)
                     .bindPopup(`<b>${hotel.nome}</b>`);
             });
-            console.log("Casette aggiunte correttamente!");
         }
-
         aggiungiCasette();
     });
 </script>
