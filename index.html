@@ -397,6 +397,20 @@
             #rotate-warning { display: flex; }
             #main-app { display: none !important; }
         }
+.city-label {
+    background: rgba(255,255,255,0.95);
+    border: 1px solid #C6C6C8;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1C1C1E;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.leaflet-tooltip-left:before, .leaflet-tooltip-right:before {
+    display: none !important; 
+}
     </style>
 </head>
 <body>
@@ -474,7 +488,7 @@
 <div id="main-app">
     <div id="dock">
         <div class="dock-icon" onclick="location.reload()">🏠</div>
-        <div class="dock-icon" onclick="rilevaGPS()">📍</div>
+	<div class="dock-icon" onclick="toggleHotels()">🏨</div>
         <div class="dock-icon" onclick="apriArchivio()">💶</div>
     </div>
 
@@ -600,17 +614,17 @@
         corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
     };
 
-    const itinerary = {
-        "2": { points: ["Genova", "Portofino"], label: "2 Ago" },
-        "3": { points: ["Portofino", "Cannes"], label: "3 Ago" },
-        "4": { points: ["Cannes", "Saint-Tropez", "Aix-en-Provence"], label: "4 Ago" },
-        "5": { points: ["Aix-en-Provence", "Gole del Verdon", "Lago di Sainte-Croix", "Aix-en-Provence"], label: "5 Ago" },
-"6": { points: ["Aix-en-Provence", "Cassis", "Le Calanques", "Logis Hotel Noemys, Aubagne"], label: "6 Ago" },        "7": { points: ["Marsiglia", "Barcellona"], label: "7 Ago" },
-        "8": { points: ["Barcellona"], label: "8 Ago" },
-   "9": { points: ["Barcellona", "Hotel Momora, Bardineto"], label: "9 Ago" },
-        "10": { points: ["Sanremo", "Aeroporto Genova"], label: "10 Ago" }
-    };
-
+const itinerary = {
+    "2": { points: ["Genova", "Portofino", { name: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 }], label: "2 Ago" },
+    "3": { points: [{ name: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 }, "Cannes", { name: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 }], label: "3 Ago" },
+    "4": { points: [{ name: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 }, "Saint-Tropez", "Aix-en-Provence", { name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }], label: "4 Ago" },
+    "5": { points: [{ name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }, "Gole del Verdon", "Lago di Sainte-Croix", { name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }], label: "5 Ago" },
+    "6": { points: [{ name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }, "Cassis", "Le Calanques", { name: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 }], label: "6 Ago" },
+    "7": { points: [{ name: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 }, { name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }], label: "7 Ago" },
+    "8": { points: [{ name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }, "Barcellona centro", { name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }], label: "8 Ago" },
+    "9": { points: [{ name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }, { name: "Hotel Momora", lat: 44.208, lon: 8.167 }], label: "9 Ago" },
+    "10": { points: [{ name: "Hotel Momora", lat: 44.208, lon: 8.167 }, "Aeroporto Genova"], label: "10 Ago" }
+};
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
     let databaseArray = []; 
 
@@ -665,6 +679,7 @@
         document.getElementById('car-title-display').innerText = activeCar.name;
 
         map = L.map('map', { zoomControl: false }).setView([43.5, 5.0], 7);
+markersLayer = L.layerGroup().addTo(map);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
         
         if(localStorage.getItem("cassa_iniziale_v11")) {
@@ -719,9 +734,17 @@
         const data = itinerary[day];
         const container = document.getElementById("leg-selector-pills");
         container.innerHTML = "";
-        for (let i = 0; i < data.points.length - 1; i++) {
+       for (let i = 0; i < data.points.length - 1; i++) {
+            // --- INIZIO CORREZIONE ---
+            // Estraiamo il nome sia per il punto di partenza che per quello di arrivo
+            let pStart = (typeof data.points[i] === 'object') ? data.points[i].name : data.points[i];
+            let pEnd = (typeof data.points[i+1] === 'object') ? data.points[i+1].name : data.points[i+1];
+            
             const p = document.createElement("button");
-            p.className = "pill"; p.innerText = `${data.points[i]} → ${data.points[i + 1]}`;
+            p.className = "pill"; 
+            p.innerText = `${pStart} → ${pEnd}`; // Qui ora verrà stampato il testo corretto
+            // --- FINE CORREZIONE ---
+            
             p.onclick = () => {
                 document.querySelectorAll("#leg-selector-pills .pill").forEach(el => el.classList.remove("active"));
                 p.classList.add("active"); impostaTratta(i);
@@ -733,47 +756,83 @@
         impostaTratta(0);
     }
 
-    function impostaTratta(idx) {
+  function impostaTratta(idx) {
         const data = itinerary[currentDay];
-        document.getElementById("start").value = data.points[idx];
-        document.getElementById("end").value = data.points[idx + 1];
+        
+        // Funzione helper per ottenere il nome leggibile
+        const getNomePunto = (p) => (typeof p === 'object' && p !== null) ? p.name : p;
+
+        document.getElementById("start").value = getNomePunto(data.points[idx]);
+        document.getElementById("end").value = getNomePunto(data.points[idx + 1]);
     }
 
-  async function calcola() {
+async function calcola() {
     const p1 = document.getElementById("start").value;
     const p2 = document.getElementById("end").value;
     const fPrice = parseFloat(document.getElementById("fuel-price").value);
     
-    // Database di coordinate fisse per evitare errori di ricerca
-    const coordFisse = {
-        "Aix-en-Provence": {lat: 43.529, lon: 5.447},
-        "Cassis": {lat: 43.214, lon: 5.539},
-        "Le Calanques": {lat: 43.219, lon: 5.437},
-        "Logis Hotel Noemys, Aubagne": {lat: 43.303, lon: 5.586},
-        "Barcellona": {lat: 41.385, lon: 2.173},
-        "Hotel Momora, Bardineto": {lat: 44.208, lon: 8.167}
+    // Questa funzione estrae le coordinate dall'itinerario, non da internet
+    const trovaCoordinate = (nomeCercato) => {
+        const giorno = itinerary[currentDay];
+        // Cerca nell'itinerario se esiste un punto che corrisponde al nome
+        const puntoTrovato = giorno.points.find(p => {
+            const nomePunto = (typeof p === 'object') ? p.name : p;
+            return nomePunto === nomeCercato;
+        });
+
+        if (typeof puntoTrovato === 'object') {
+            return { lat: puntoTrovato.lat, lon: puntoTrovato.lon };
+        }
+        
+        // Se non è un oggetto (hotel), usa le coordinate fisse
+        const mappaCittà = {
+            "Genova": {lat: 44.4056, lon: 8.9463},
+            "Portofino": {lat: 44.3033, lon: 9.2089},
+            "Cannes": {lat: 43.5528, lon: 7.0174},
+            "Saint-Tropez": {lat: 43.2704, lon: 6.6417},
+            "Aix-en-Provence": {lat: 43.529, lon: 5.447},
+            "Gole del Verdon": {lat: 43.75, lon: 6.33},
+            "Lago di Sainte-Croix": {lat: 43.76, lon: 6.18},
+            "Cassis": {lat: 43.214, lon: 5.539},
+            "Le Calanques": {lat: 43.219, lon: 5.437},
+            "Marsiglia": {lat: 43.2965, lon: 5.3698},
+            "Barcellona": {lat: 41.385, lon: 2.173},
+                     "Aeroporto Genova": {lat: 44.413, lon: 8.852}
+        };
+        return mappaCittà[nomeCercato] || null;
     };
 
+    const coord1 = trovaCoordinate(p1);
+    const coord2 = trovaCoordinate(p2);
+
+    if (!coord1 || !coord2) {
+        alert("Errore: Impossibile trovare le coordinate per " + p1 + " o " + p2);
+        return;
+    }
+
     try {
-        // Funzione helper per ottenere le coordinate
-        const getCoord = async (nome) => {
-            if (coordFisse[nome]) return coordFisse[nome];
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nome)}&limit=1`).then(r => r.json());
-            if (!res || res.length === 0) throw new Error("Luogo non trovato");
-            return { lat: parseFloat(res[0].lat), lon: parseFloat(res[0].lon) };
-        };
-
-        const c1 = await getCoord(p1);
-        const c2 = await getCoord(p2);
-
-        const osrm = await fetch(`https://router.project-osrm.org/route/v1/driving/${c1.lon},${c1.lat};${c2.lon},${c2.lat}?overview=full&geometries=geojson`).then(r => r.json());
+        // Calcola rotta usando le coordinate, non i nomi!
+        const url = `https://router.project-osrm.org/route/v1/driving/${coord1.lon},${coord1.lat};${coord2.lon},${coord2.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(url).then(r => r.json());
         
-        const route = osrm.routes[0];
+        const route = res.routes[0];
+markersLayer.clearLayers();
+        const creaMarker = (coord, lettera, nome) => {
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="width: 28px; height: 28px; border-radius: 50%; background: #007AFF; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">${lettera}</div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
+            });
+            const marker = L.marker([coord.lat, coord.lon], { icon: icon }).addTo(markersLayer);
+            marker.bindTooltip(nome, { permanent: true, direction: 'top', className: 'city-label', offset: [0, -15] }).openTooltip();
+        };
+        creaMarker(coord1, 'A', p1);
+        creaMarker(coord2, 'B', p2);
         currentKm = (route.distance / 1000).toFixed(1);
         
         const fuelHint = (currentKm / activeCar.consumption) * fPrice;
         document.getElementById("hint-fuel").innerText = fuelHint.toFixed(2);
-        
         document.getElementById("km-display").innerText = currentKm + " KM";
         document.getElementById("results-tile").style.display = "block";
 
@@ -783,8 +842,7 @@
         
         aggiornaTotale();
     } catch (e) { 
-        console.error(e);
-        alert("Errore nel calcolo del percorso. Verifica la connessione o il nome della località."); 
+        alert("Errore nel calcolo del percorso. Verifica la connessione."); 
     }
 }
 
@@ -967,50 +1025,69 @@
   window.firestoreLib = { collection, onSnapshot, addDoc, doc, deleteDoc };
 </script>
 <script>
+    // Variabili globali per gestire i marker
+    let hotelsVisible = true;
+let markersLayer;
+    let hotelMarkers = [];
+
+    // Funzione che crea i marker e li salva nell'array
+    function inizializzaHotels() {
+        if (typeof map === 'undefined') {
+            setTimeout(inizializzaHotels, 500);
+            return;
+        }
+
+        const iconaHotel = L.divIcon({
+            html: `<div style="font-size: 24px;">🏨</div>`,
+            className: 'marker-hotel',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        const alberghi = [
+            { nome: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 },
+            { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
+            { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
+            { nome: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 },
+            { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
+            { nome: "Hotel Momora", lat: 44.208, lon: 8.167 }
+        ];
+
+        alberghi.forEach(hotel => {
+            const marker = L.marker([hotel.lat, hotel.lon], { icon: iconaHotel })
+                .addTo(map)
+                .bindPopup(`<b>${hotel.nome}</b>`);
+            hotelMarkers.push(marker);
+        });
+        
+        caricaZone();
+    }
+
+    // Funzione chiamata dal tasto nel dock
+    function toggleHotels() {
+        hotelsVisible = !hotelsVisible;
+        hotelMarkers.forEach(marker => {
+            if (hotelsVisible) marker.addTo(map);
+            else map.removeLayer(marker);
+        });
+    }
+
+    function caricaZone() {
+        fetch('zbe_barcellona.geojson')
+            .then(res => res.json())
+            .then(data => L.geoJSON(data, { style: { color: 'red', weight: 3, fillColor: 'red', fillOpacity: 0.3 } }).addTo(map))
+            .catch(e => console.warn("GeoJSON Barcellona non trovato"));
+
+        fetch('zfe_marsiglia.geojson')
+            .then(res => res.json())
+            .then(data => L.geoJSON(data, { style: { color: 'blue', weight: 3, fillColor: 'blue', fillOpacity: 0.3 } }).addTo(map))
+            .catch(e => console.warn("GeoJSON Marsiglia non trovato"));
+    }
+
+    // Avvio automatico dopo che l'app è stata inizializzata
     window.addEventListener('load', () => {
-        function aggiungiCasette() {
-            if (typeof map === 'undefined') {
-                setTimeout(aggiungiCasette, 500);
-                return;
-            }
-
-            const iconaHotel = L.divIcon({
-                html: `<div style="font-size: 24px;">🏨</div>`,
-                className: 'marker-hotel',
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
-            });
-
-            const alberghi = [
-                { nome: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 },
-                { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
-                { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
-                { nome: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 },
-                { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
-                { nome: "Hotel Momora", lat: 44.208, lon: 8.167 }
-            ];
-
-            alberghi.forEach(hotel => {
-                L.marker([hotel.lat, hotel.lon], { icon: iconaHotel })
-                    .addTo(map)
-                    .bindPopup(`<b>${hotel.nome}</b>`);
-            });
-            
-            // --- INSERITO IL CARICAMENTO ZONE QUI ---
-            caricaZone();
-        }
-
-        function caricaZone() {
-            fetch('zbe_barcellona.geojson')
-                .then(res => res.json())
-                .then(data => L.geoJSON(data, { style: { color: 'red', weight: 3, fillColor: 'red', fillOpacity: 0.3 } }).addTo(map));
-
-            fetch('zfe_marsiglia.geojson')
-                .then(res => res.json())
-                .then(data => L.geoJSON(data, { style: { color: 'blue', weight: 3, fillColor: 'blue', fillOpacity: 0.3 } }).addTo(map));
-        }
-
-        aggiungiCasette();
+        // Aspettiamo un istante per assicurarci che la mappa sia pronta
+        setTimeout(inizializzaHotels, 1000);
     });
 </script>
 </body>
