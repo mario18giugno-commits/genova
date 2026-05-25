@@ -440,9 +440,15 @@
             <model-viewer src="fiat_panda-v1.glb" auto-rotate bounds="tight" interaction-prompt="none"></model-viewer>
             <span style="font-weight:700; font-size: 14px;">Fiat Panda Hybrid</span>
         </div>
+        
         <div class="asset-tile" onclick="avviaApp('corsa')">
             <model-viewer src="opel_corsa_b_3door_1998-v1.glb" orientation="0deg -90deg 90deg" bounds="tight" center="0m 0m 0m" auto-rotate interaction-prompt="none"></model-viewer>
             <span style="font-weight:700; font-size: 14px;">Opel Corsa 1.2</span>
+        </div>
+
+        <div class="asset-tile" onclick="avviaApp('mg3')">
+            <model-viewer src="m_mg3-ev.glb" auto-rotate bounds="tight" interaction-prompt="none"></model-viewer>
+            <span style="font-weight:700; font-size: 14px;">MG3 Hybrid+</span>
         </div>
     </div>
 </div>
@@ -611,7 +617,8 @@
 <script>
     const carConfig = {
         panda: { name: "Fiat Panda Hybrid 2024", consumption: 18.0, file: "fiat_panda-v1.glb", center: "auto" },
-        corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" }
+        corsa: { name: "Opel Corsa 1.2 75CV", consumption: 18.5, file: "opel_corsa_b_3door_1998-v1.glb", center: "0m 0m 0m" },
+	mg3: { name: "MG3 Hybrid+ 2024", consumption: 22.7, file: "m_mg3-ev.glb", center: "auto" }
     };
 
 const itinerary = {
