@@ -474,14 +474,8 @@
         <div class="flex-box">
             <div class="flex-child">
                 <div class="balance-box" style="border-left-color: var(--cp-orange);">
-                    <div class="balance-title">📊 PRIMO SALDO (Fino al 7 Ago)</div>
+                    <div class="balance-title">📊 SALDO FINALE</div>
                     <div id="debito-periodo-1">Nessuna spesa.</div>
-                </div>
-            </div>
-            <div class="flex-child">
-                <div class="balance-box" style="border-left-color: var(--cp-blue);">
-                    <div class="balance-title">🏁 SECONDO SALDO (8-9 Ago)</div>
-                    <div id="debito-periodo-2">Nessuna spesa.</div>
                 </div>
             </div>
         </div>
@@ -565,7 +559,6 @@
                                 <option value="cassa">💳 Cassa</option>
                                 <option value="mario">👨‍✈️ Mario</option>
                                 <option value="samuele">👦 Samu</option>
-                                <option value="michael">👱 Mich</option>
                             </select>
                         </div>
                         
@@ -577,7 +570,6 @@
                                 <option value="cassa">💳 Cassa</option>
                                 <option value="mario">👨‍✈️ Mario</option>
                                 <option value="samuele">👦 Samu</option>
-                                <option value="michael">👱 Mich</option>
                             </select>
                         </div>
                     </div>
@@ -590,7 +582,6 @@
                             <option value="cassa">💳 Cassa</option>
                             <option value="mario">👨‍✈️ Mario</option>
                             <option value="samuele">👦 Samu</option>
-                            <option value="michael">👱 Mich</option>
                         </select>
                     </div>
                 </div>
@@ -622,28 +613,75 @@
     };
 
 const itinerary = {
-    "2": { points: ["Genova", "Portofino", { name: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 }], label: "2 Ago" },
-    "3": { points: [{ name: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 }, "Cannes", { name: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 }], label: "3 Ago" },
-    "4": { points: [{ name: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 }, "Saint-Tropez", "Aix-en-Provence", { name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }], label: "4 Ago" },
-    "5": { points: [{ name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }, "Gole del Verdon", "Lago di Sainte-Croix", { name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }], label: "5 Ago" },
-    "6": { points: [{ name: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 }, "Cassis", "Le Calanques", { name: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 }], label: "6 Ago" },
-    "7": { points: [{ name: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 }, { name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }], label: "7 Ago" },
-    "8": { points: [{ name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }, "Barcellona centro", { name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }], label: "8 Ago" },
-    "9": { points: [{ name: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 }, { name: "Hotel Momora", lat: 44.208, lon: 8.167 }], label: "9 Ago" },
-    "10": { points: [{ name: "Hotel Momora", lat: 44.208, lon: 8.167 }, "Aeroporto Genova"], label: "10 Ago" }
+    "3": {
+        points: [
+            "Aeroporto di Genova",
+            "Cannes",
+            { name: "Sure Hotel Mougins Belvedere", lat: 43.6043, lon: 6.9933 }
+        ],
+        label: "3 Ago"
+    },
+    "4": {
+        points: [
+            { name: "Sure Hotel Mougins Belvedere", lat: 43.6043, lon: 6.9933 },
+            "Saint-Tropez",
+            "Aix-en-Provence",
+            { name: "Comfort Aparthotel Aix le Tholonet", lat: 43.5258, lon: 5.4872 }
+        ],
+        label: "4 Ago"
+    },
+    "5": {
+        points: [
+            { name: "Comfort Aparthotel Aix le Tholonet", lat: 43.5258, lon: 5.4872 },
+            "Gole del Verdon",
+            "Lago di Sainte-Croix",
+            { name: "Comfort Aparthotel Aix le Tholonet", lat: 43.5258, lon: 5.4872 }
+        ],
+        label: "5 Ago"
+    },
+    "6": {
+        points: [
+            { name: "Comfort Aparthotel Aix le Tholonet", lat: 43.5258, lon: 5.4872 },
+            "Cassis",
+            "Le Calanques",
+            { name: "Greet Hotel Marseille Parc Chanot", lat: 43.2638, lon: 5.3876 }
+        ],
+        label: "6 Ago"
+    },
+    "7": {
+        points: [
+            { name: "Greet Hotel Marseille Parc Chanot", lat: 43.2638, lon: 5.3876 },
+            "Marsiglia"
+        ],
+        label: "7 Ago"
+    },
+    "8": {
+        points: [
+            { name: "Greet Hotel Marseille Parc Chanot", lat: 43.2638, lon: 5.3876 },
+            "Sanremo",
+            { name: "La Pecora Nera Rocchetta Nervina", lat: 43.8705, lon: 7.6333 }
+        ],
+        label: "8 Ago"
+    },
+    "9": {
+        points: [
+            { name: "La Pecora Nera Rocchetta Nervina", lat: 43.8705, lon: 7.6333 },
+            "Aeroporto di Genova"
+        ],
+        label: "9 Ago"
+    }
 };
+
     let activeCar, map, routeLayer, currentKm = 0, currentDay = "3";
     let databaseArray = []; 
 
     const hotelDatabase = {
-        "2": "Elegants Apartments Rapallo, Via Fratelli Betti 175A/9, 16035 Rapallo, Italia",
-        "3": "IBIS Mouans Sartoux, 20 Avenue des Sources, 06370 Mouans-Sartoux, Francia",
-        "4": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
-        "5": "Campanile Prime, 1 Rue Jean Andreani, 13090 Aix-en-Provence, Francia",
-        "6": "Logis Hotel Noemys, Chemin de la Gauthière, 13400 Aubagne, Francia",
-        "7": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
-        "8": "Ibis Santa Coloma, Avenida Pallaresa 73, 08924 Santa Coloma de Gramenet, Spagna",
-        "9": "Hotel Momora, Piazza Vittorio Veneto 5, 17057 Bardineto, Italia"
+        "3": "Sure Hotel by Best Western Mougins Belvedere, Chemin du Belvedere, 06250 Mougins, Francia",
+        "4": "Comfort Aparthotel Aix le Tholonet, 445 Allee Francois Aubrun, 13100 Aix-en-Provence, Francia",
+        "5": "Comfort Aparthotel Aix le Tholonet, 445 Allee Francois Aubrun, 13100 Aix-en-Provence, Francia",
+        "6": "Greet Hotel Marseille Parc Chanot, 11 Rue du Commandant Rolland, 13008 Marsiglia, Francia",
+        "7": "Greet Hotel Marseille Parc Chanot, 11 Rue du Commandant Rolland, 13008 Marsiglia, Francia",
+        "8": "La Pecora Nera, Via degli Ulivi 18, Rocchetta Nervina, Italia"
     };
 
     function abilitaTrascina(selettore) {
@@ -793,8 +831,8 @@ async function calcola() {
         
         // Se non è un oggetto (hotel), usa le coordinate fisse
         const mappaCittà = {
+            "Aeroporto di Genova": {lat: 44.413, lon: 8.852},
             "Genova": {lat: 44.4056, lon: 8.9463},
-            "Portofino": {lat: 44.3033, lon: 9.2089},
             "Cannes": {lat: 43.5528, lon: 7.0174},
             "Saint-Tropez": {lat: 43.2704, lon: 6.6417},
             "Aix-en-Provence": {lat: 43.529, lon: 5.447},
@@ -803,8 +841,7 @@ async function calcola() {
             "Cassis": {lat: 43.214, lon: 5.539},
             "Le Calanques": {lat: 43.219, lon: 5.437},
             "Marsiglia": {lat: 43.2965, lon: 5.3698},
-            "Barcellona": {lat: 41.385, lon: 2.173},
-                     "Aeroporto Genova": {lat: 44.413, lon: 8.852}
+            "Sanremo": {lat: 43.8155, lon: 7.7759}
         };
         return mappaCittà[nomeCercato] || null;
     };
@@ -943,8 +980,8 @@ markersLayer.clearLayers();
         document.getElementById("archive-list").innerHTML = databaseArray.map(i => {
             const creaBadge = (importo, pagatore) => {
                 if (!importo || importo <= 0) return "";
-                const colori = { cassa: "#007AFF", mario: "#FF9500", samuele: "#34C759", michael: "#5856D6" };
-                const nomi = { cassa: "💳", mario: "M", samuele: "S", michael: "Mi" };
+                const colori = { cassa: "#007AFF", mario: "#FF9500", samuele: "#34C759" };
+                const nomi = { cassa: "💳", mario: "M", samuele: "S" };
                 return `<span style="background:${colori[pagatore]}; color:white; padding:2px 6px; border-radius:6px; font-size:10px; margin:2px; display:inline-block; font-weight:bold;">
                     ${nomi[pagatore] || pagatore}
                 </span>`;
@@ -964,11 +1001,9 @@ markersLayer.clearLayers();
     }
 
     function calcolaContiIntelligenti(arch) {
-        let bilancioP1 = { mario: 0, samuele: 0, michael: 0 };
-        let bilancioP2 = { mario: 0, michael: 0 };
+        let bilancio = { mario: 0, samuele: 0 };
 
         arch.forEach(spesa => {
-            const isPeriodo1 = parseInt(spesa.giorno) <= 7;
             const scomp = [
                 { importo: spesa.benzina, pagatore: spesa.payerFuel },
                 { importo: spesa.pedaggi, pagatore: spesa.payerToll },
@@ -977,20 +1012,14 @@ markersLayer.clearLayers();
 
             scomp.forEach(v => {
                 if (v.importo <= 0 || v.pagatore === 'cassa') return;
-                if (isPeriodo1) {
-                    let quota = v.importo / 3;
-                    bilancioP1.mario -= quota; bilancioP1.samuele -= quota; bilancioP1.michael -= quota;
-                    if (bilancioP1[v.pagatore] !== undefined) bilancioP1[v.pagatore] += v.importo;
-                } else {
-                    let quota = v.importo / 2;
-                    bilancioP2.mario -= quota; bilancioP2.michael -= quota;
-                    if (bilancioP2[v.pagatore] !== undefined) bilancioP2[v.pagatore] += v.importo;
-                }
+                let quota = v.importo / 2;
+                bilancio.mario -= quota;
+                bilancio.samuele -= quota;
+                if (bilancio[v.pagatore] !== undefined) bilancio[v.pagatore] += v.importo;
             });
         });
 
-        document.getElementById("debito-periodo-1").innerHTML = generaRisoluzioneDebiti(bilancioP1);
-        document.getElementById("debito-periodo-2").innerHTML = generaRisoluzioneDebiti(bilancioP2);
+        document.getElementById("debito-periodo-1").innerHTML = generaRisoluzioneDebiti(bilancio);
     }
 
     function generaRisoluzioneDebiti(bilancio) {
@@ -1052,12 +1081,10 @@ let markersLayer;
         });
 
         const alberghi = [
-            { nome: "Elegants Apartments Rapallo", lat: 44.354, lon: 9.231 },
-            { nome: "IBIS Mouans Sartoux", lat: 43.6062, lon: 6.9658 },
-            { nome: "Campanile Prime Aix", lat: 43.5134, lon: 5.4333 },
-            { nome: "Logis Hotel Noemys", lat: 43.303, lon: 5.586 },
-            { nome: "Ibis Santa Coloma", lat: 41.4468, lon: 2.2132 },
-            { nome: "Hotel Momora", lat: 44.208, lon: 8.167 }
+            { nome: "Sure Hotel Mougins Belvedere", lat: 43.6043, lon: 6.9933 },
+            { nome: "Comfort Aparthotel Aix le Tholonet", lat: 43.5258, lon: 5.4872 },
+            { nome: "Greet Hotel Marseille Parc Chanot", lat: 43.2638, lon: 5.3876 },
+            { nome: "La Pecora Nera Rocchetta Nervina", lat: 43.8705, lon: 7.6333 }
         ];
 
         alberghi.forEach(hotel => {
